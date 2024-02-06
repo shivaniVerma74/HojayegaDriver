@@ -142,9 +142,14 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           margin: const EdgeInsets.all(10),
-          child: const Icon(
-            Icons.arrow_back,
-            color: Colors.blue,
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Icon(
+              Icons.arrow_back,
+              color: Colors.blue,
+            ),
           ),
         ),
       ),
@@ -169,14 +174,14 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
                       fontSize: 24,
                       fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 const Text(
                   'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry',
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Container(
@@ -207,7 +212,7 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
                               width: 5,
                             ),
                             Text(signUpList[index],
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 13, color: Colors.white))
                           ],
                         ),
@@ -381,10 +386,10 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
                     Electricity: electricityImage.toString(), Police: policeImage.toString(),
                     AadharFront: aadharImage.toString(),
                     AadharBack: aadharBack.toString(),
-                BankName: widget.BankName,
-                AccountNumber: widget.AccountNumber,
-                Ifsc:widget.Ifsc, UpiId: widget.UpiId,
-                QrImage: widget.QrImage.toString(),
+                    BankName: widget.BankName,
+                    AccountNumber: widget.AccountNumber,
+                    Ifsc:widget.Ifsc, UpiId: widget.UpiId,
+                   QrImage: widget.QrImage.toString(),
               ),
               ),
               );
@@ -420,15 +425,18 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
         //margin: EdgeInsets.symmetric(horizontal: 20),
         height: MediaQuery.of(context).size.height/7,
         width: MediaQuery.of(context).size.width * 0.8,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.grey.withOpacity(0.2)),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.grey.withOpacity(0.2),
+          border: Border.all(color: colors.primary)
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: selfieImage != null
               ? Image.file(selfieImage!, fit: BoxFit.cover)
               : Column(
-            children: [
+            children: const [
               Center(
-                  child: Icon(Icons.upload_file_outlined, size: 60)),
+                  child: Icon(Icons.upload_file_outlined, size: 60),
+              ),
               Text("Click Selfie")
             ],
           ),
@@ -447,7 +455,9 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
+            color: Colors.grey.withOpacity(0.2),
+            border: Border.all(color: colors.primary)
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: drivingImage != null
@@ -474,7 +484,9 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
+            color: Colors.grey.withOpacity(0.2),
+            border: Border.all(color: colors.primary)
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: electricityImage != null
@@ -501,7 +513,9 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
+            color: Colors.grey.withOpacity(0.2),
+            border: Border.all(color: colors.primary)
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: policeImage != null
@@ -529,7 +543,9 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
+            color: Colors.grey.withOpacity(0.2),
+            border: Border.all(color: colors.primary)
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: aadharImage != null
@@ -556,7 +572,9 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.2)),
+            color: Colors.grey.withOpacity(0.2),
+            border: Border.all(color: colors.primary)
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: aadharBack != null

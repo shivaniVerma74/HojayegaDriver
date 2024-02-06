@@ -44,6 +44,7 @@ dependencies:
   google_maps_place_picker_mb: ^3.0.1
   google_maps_flutter: ^2.2.5
   razorpay_flutter: ^1.1.1
+  pinput: ^3.0.1
   curved_labeled_navigation_bar: ^2.0.2
   image_picker: ^0.8.4+9
   geolocator: ^9.0.2

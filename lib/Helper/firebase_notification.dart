@@ -87,7 +87,6 @@ class LocalNotificationService {
     if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
       // App was opened from a notification
       // TODO: handle the notification
-
     } else {
       // App was opened normally
     }

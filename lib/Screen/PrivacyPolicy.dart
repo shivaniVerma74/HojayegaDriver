@@ -48,7 +48,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
       print('_____termconditionss${response.statusCode}');
       final result =  await response.stream.bytesToString();
       final jsonResponse = json.decode(result);
-      print('______asdsadsa____${result}');
+      print('______asdsadsa____$result');
       setState(() {
         privacyPolicy = jsonResponse['setting']['html'];
         privacyPolicyTitle = jsonResponse['setting']['title'];

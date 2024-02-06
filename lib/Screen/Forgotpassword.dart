@@ -162,7 +162,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               ),
                               child: const Text("Send OTP", style: TextStyle(color: Colors.white, fontSize: 18)),
                               onPressed: () {
-
                                 // if(emailCtr.text.isEmpty){
                                 //   Fluttertoast.showToast(msg: "Please fill Field");
                                 // } else {

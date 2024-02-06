@@ -427,46 +427,46 @@ class _EditProfileState extends State<MyProfile> {
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                "Select Vehicle Type",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Radio(value: false, groupValue: true, onChanged: (val) {}),
-                  const Icon(
-                    Icons.car_crash,
-                    color: Color(0xFF112c48),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Radio(value: false, groupValue: true, onChanged: (val) {}),
-                  const Icon(
-                    Icons.electric_rickshaw,
-                    color: Color(0xFF112c48),
-                  ),
-                  Radio(value: false, groupValue: true, onChanged: (val) {}),
-                  const Icon(
-                    Icons.electric_bike,
-                    color: Color(0xFF112c48),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Radio(value: false, groupValue: true, onChanged: (val) {}),
-                  const Icon(
-                    Icons.fire_truck,
-                    color: Color(0xFF112c48),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
+              // const Text(
+              //   "Select Vehicle Type",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Row(
+              //   children: [
+              //     Radio(value: false, groupValue: true, onChanged: (val) {}),
+              //     const Icon(
+              //       Icons.car_crash,
+              //       color: Color(0xFF112c48),
+              //     ),
+              //     const SizedBox(
+              //       width: 10,
+              //     ),
+              //     Radio(value: false, groupValue: true, onChanged: (val) {}),
+              //     const Icon(
+              //       Icons.electric_rickshaw,
+              //       color: Color(0xFF112c48),
+              //     ),
+              //     Radio(value: false, groupValue: true, onChanged: (val) {}),
+              //     const Icon(
+              //       Icons.electric_bike,
+              //       color: Color(0xFF112c48),
+              //     ),
+              //     const SizedBox(
+              //       width: 10,
+              //     ),
+              //     Radio(value: false, groupValue: true, onChanged: (val) {}),
+              //     const Icon(
+              //       Icons.fire_truck,
+              //       color: Color(0xFF112c48),
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
               Row(
                 children: [
                   Container(
@@ -479,7 +479,8 @@ class _EditProfileState extends State<MyProfile> {
                           BoxShadow(
                               color: Colors.grey,
                               blurRadius: 2,
-                              offset: Offset(0, 1))
+                              offset: Offset(0, 1),
+                          )
                         ]),
                     child: const Icon(
                       Icons.confirmation_number,

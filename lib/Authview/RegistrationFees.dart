@@ -42,7 +42,6 @@ class RegistrationFees extends StatefulWidget {
     this.Vehicle, this.Zip, this.lat, this.long, this.VehicleType, this.Pincode, this.AadharBack,
     this.AadharFront, this.Driving, this.Electricity, this.Police, this.Selfie,
     this.QrImage, this.UpiId, this.Ifsc, this.AccountNumber, this.BankName
-
   });
 
   @override
@@ -168,7 +167,7 @@ String? mobileHolder;
   Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
     Fluttertoast.showToast(msg: "Payment successfully");
     registration();
-    // Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+    // Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -180,7 +179,6 @@ String? mobileHolder;
   Razorpay? _razorpay;
   int? pricerazorpayy;
   void openCheckout(amount) async {
-    print("hhhhhhhhhhhhh");
     double res = double.parse(amount.toString());
     pricerazorpayy= int.parse(res.toStringAsFixed(0)) * 100;
     // Navigator.of(context).pop();
@@ -211,13 +209,14 @@ String? mobileHolder;
         elevation: 0,
         leading: Container(
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+              color: Colors.white, borderRadius: BorderRadius.circular(10),
+          ),
           margin: EdgeInsets.all(10),
           child: InkWell(
             onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(
+            child: const Icon(
               Icons.arrow_back,
               color: Colors.blue,
             ),
@@ -241,9 +240,10 @@ String? mobileHolder;
                   image: AssetImage("assets/images/jacket.png",
                   ),
                   fit: BoxFit.fitHeight,
-                )),
+                ),
+            ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: const EdgeInsets.symmetric(horizontal: 40),
               child: const Text(
                 'Would you like to buy?',
                 textAlign: TextAlign.center,
@@ -258,7 +258,10 @@ String? mobileHolder;
                width: 120,
                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: colors.white),
                child: Center(
-                child: Text(
+                 child: isselected == "" || isselected == "" ? const Text("0.0 Rs.", style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: colors.primary),): Text(
                   'Total = ${isselected.toString()} Rs.',
                   style: const TextStyle(
                       fontSize: 16,
@@ -293,13 +296,13 @@ String? mobileHolder;
                               else if(index == 1){
                                 setState(() {
                                   isselected = jacketAmt.toString();
-                                  print("jacket amount in tapp ${jacketAmt}");
+                                  print("jacket amount in tapp $jacketAmt");
                                 });
                               }
                               else{
                                 setState(() {
                                   isselected = mobileHolder.toString();
-                                  print("mobileee amount in tapp ${mobileHolder}");
+                                  print("mobileee amount in tapp $mobileHolder");
                                 });
                               }
                           },
@@ -311,16 +314,16 @@ String? mobileHolder;
                             size: 30,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Text(list[index],
-                            style: TextStyle(fontSize: 15, color: Colors.black))
+                            style: const TextStyle(fontSize: 15, color: Colors.black))
                       ],
                     );
                   },
                   separatorBuilder: (context, index) {
-                    return SizedBox(
+                    return const SizedBox(
                       width: 18,
                     );
                   },

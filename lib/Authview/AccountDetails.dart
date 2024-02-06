@@ -151,10 +151,10 @@ class _AccountDetailsState extends State<AccountDetails> {
                               Icons.circle,
                               color: Colors.white,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
-                            Text(signUpList[index], style: TextStyle(fontSize: 13, color: Colors.white))
+                            Text(signUpList[index], style: const TextStyle(fontSize: 13, color: Colors.white))
                           ],
                         ),
                       );
@@ -171,7 +171,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10)),
                     child: accountInformatin()),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Container(
@@ -201,8 +201,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                       Date: widget.Date, Vehicle: widget.VehicleType, Contact: widget.Contact, Address: widget.Address,
                       States: stateValue.toString(), City: cityValue.toString(), Region: widget.Region, Zip: widget.Zip,
                       lat: widget.lat, long: widget.long, VehicleType: selectedVehicle.toString(), Pincode: widget.Pincode,
-                    BankName: banknamectr.text, AccountNumber: acoountCtr.text, Ifsc: ifscCtr.text, UpiId: upiCtr.text, QrImage: qrImage.toString(),
-                  ),
+                    BankName: banknamectr.text, AccountNumber: acoountCtr.text, Ifsc: ifscCtr.text, UpiId: upiCtr.text, QrImage: qrImage.toString(),),
                   ),
                   );
                 }
@@ -226,6 +225,7 @@ class _AccountDetailsState extends State<AccountDetails> {
               ),
             ),
           ),
+          SizedBox(height: 10,)
         ],
       ),
     );
@@ -263,7 +263,6 @@ class _AccountDetailsState extends State<AccountDetails> {
       'Cookie': 'ci_session=95bbd5f6f543e31f65185f824755bcb57842c775'
     };
     var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getStates));
-
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
@@ -288,7 +287,6 @@ class _AccountDetailsState extends State<AccountDetails> {
     request.fields.addAll({
       'state_id': sId.toString()
     });
-
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
@@ -329,7 +327,6 @@ class _AccountDetailsState extends State<AccountDetails> {
           const SizedBox(
             height: 10,
           ),
-
           Container(
             width: MediaQuery.of(context).size.width,
             child: Row(
@@ -341,14 +338,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                   child: Container(
                       width: 40,
                       height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
+                      child: Image.asset("assets/images/bankname.png",scale: 1.5,)
                   ),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -391,14 +388,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                   child: Container(
                       width: 40,
                       height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
+                      child: Image.asset("assets/images/accountnumber.png",scale: 1.5,)
                   ),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -441,14 +438,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                   child: Container(
                       width: 40,
                       height: 40,
-                      child: Image.asset("assets/images/location.png",scale: 1.5,)
+                      child: Image.asset("assets/images/IFSCcode.png",scale: 1.5,)
                   ),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -638,14 +635,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                   child: Container(
                       width: 40,
                       height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
+                      child: Image.asset("assets/images/bankname.png",scale: 1.5,)
                   ),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -677,12 +674,6 @@ class _AccountDetailsState extends State<AccountDetails> {
           const SizedBox(
             height: 10,
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          const SizedBox(
-            height: 3,
-          ),
           InkWell(
               onTap: () {
                 showAlertDialog(context, "qrcode");
@@ -702,7 +693,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           //margin: EdgeInsets.symmetric(horizontal: 20),
-          height: MediaQuery.of(context).size.height/8.4,
+          height: MediaQuery.of(context).size.height/7.4,
           width: MediaQuery.of(context).size.width * 0.7,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.grey.withOpacity(0.2)),
           child: ClipRRect(
@@ -727,7 +718,7 @@ class _AccountDetailsState extends State<AccountDetails> {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Image'),
+        title: const Text('Select Image'),
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

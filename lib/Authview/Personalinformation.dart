@@ -31,11 +31,16 @@ class _PersonalInformationState extends State<PersonalInformation> {
   TextEditingController cPasswordEditingController = TextEditingController();
   TextEditingController dobCtr = TextEditingController();
 
+
+  bool showPassword = false;
+  bool showPasswordNew = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: colors.backgroundcolor,
-      body: Stack(
+      body:
+      Stack(
         children: [
           Container(
             height: MediaQuery.of(context).size.height * 0.4,
@@ -138,7 +143,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             width: 10,
                           ),
                           Container(
-                            width: 260,
+                            width: 240,
                             height: 45,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -188,7 +193,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             width: 10,
                           ),
                           Container(
-                            width: 260,
+                            width: 240,
                             height: 45,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -241,7 +246,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             width: 10,
                           ),
                           Container(
-                            width: 260,
+                            width: 240,
                             height: 45,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -305,7 +310,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             width: 10,
                           ),
                           Container(
-                            width: 260,
+                            width: 240,
                             height: 45,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -369,7 +374,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                             width: 10,
                           ),
                           Container(
-                            width: 260,
+                            width: 240,
                             height: 45,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -384,21 +389,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               ],
                             ),
                             child: TextFormField(
-                              onTap: () async {
-                                DateTime? datePicked = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2024));
-                                if (datePicked != null) {
-                                  print(
-                                      'Date Selected:${datePicked.day}-${datePicked.month}-${datePicked.year}');
-                                  String formettedDate =
-                                  DateFormat('dd-MM-yyyy').format(datePicked);
-                                  setState(() {
-                                    dobCtr.text = formettedDate;
-                                  });
-                                }
+                              onTap: ()  {
+                                _selectDate1();
                               },
                               controller: dobCtr,
                               decoration: const InputDecoration(
@@ -511,53 +503,43 @@ class _PersonalInformationState extends State<PersonalInformation> {
       ),
     );
   }
-
-  InputDecoration commonInputDecoration(
-      {String labelText = '', String hintText = '', Color? color}) {
-    return InputDecoration(
-      border: InputBorder.none,
-      filled: true,
-      fillColor: Colors.grey.withOpacity(0.2),
-      // labelText: labelText,
-      hintText: hintText,
-      // labelStyle: const TextStyle(
-      //   color: Colors.black,
-      //   fontSize: 14,
-      // ),
-      hintStyle: const TextStyle(
-        color: Colors.grey,
-        fontSize: 12,
-      ),
-    );
+  Future _selectDate1() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2025),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+                primaryColor: colors.primary,
+                // accentColor: Colors.black,
+                colorScheme: ColorScheme.light(primary: colors.primary),
+                buttonTheme:
+                ButtonThemeData(textTheme: ButtonTextTheme.accent)),
+            child: child!,
+          );
+        });
+    if (picked != null)
+      setState(() {
+        String yourDate = picked.toString();
+        _dateValue = convertDateTimeDisplay(yourDate);
+        dateFormate = DateFormat("dd/MM/yyyy").format(DateTime.parse(_dateValue ?? ""));
+      });
+    setState(() {
+      dobCtr = TextEditingController(text: _dateValue);
+    });
   }
 
-  bool showPassword = false;
-  bool showPasswordNew = false;
+  String _dateValue = '';
+  var dateFormate;
 
-  InputDecoration passwordInputDecoration(
-      {String labelText = '', String hintText = '', Color? color}) {
-    return InputDecoration(
-      suffixIcon: InkWell(
-        onTap: () {
-          setState(() {
-            showPassword = !showPassword;
-          });
-        },
-        child: Icon(showPassword == true ? Icons.visibility : Icons.visibility_off, color: colors.secondary),
-      ),
-      border: InputBorder.none,
-      filled: true,
-      fillColor: Colors.grey.withOpacity(0.2),
-      // labelText: labelText,
-      hintText: hintText,
-      // labelStyle: const TextStyle(
-      //   color: Colors.black,
-      //   fontSize: 14,
-      // ),
-      hintStyle: const TextStyle(
-        color: Colors.grey,
-        fontSize: 12,
-      ),
-    );
+  String convertDateTimeDisplay(String date) {
+    final DateFormat displayFormater = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+    final DateFormat serverFormater = DateFormat('yyyy-MM-dd');
+    final DateTime displayDate = displayFormater.parse(date);
+    final String formatted = serverFormater.format(displayDate);
+    return formatted;
   }
+
 }

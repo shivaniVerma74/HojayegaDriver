@@ -26,10 +26,6 @@ class ApiServicves{
   static const String withdrawRequest = baseUrl+'withdrawl_request';
   static const String withdrawList = baseUrl+'withdrawl_list';
   static const String orderHistory = baseUrl+'get_order_history';
-  final Uri getTicketTypeApi = Uri.parse(baseUrl + 'get_ticket_types');
-  final Uri addTicketApi = Uri.parse(baseUrl + 'add_ticket');
-  final Uri editTicketApi = Uri.parse(baseUrl + 'edit_ticket');
-  final Uri sendMsgApi = Uri.parse(baseUrl + 'send_message');
-  final Uri getTicketApi = Uri.parse(baseUrl + 'get_tickets');
+  static const String statusUpdate = baseUrl+'complete_booking';
 
 }

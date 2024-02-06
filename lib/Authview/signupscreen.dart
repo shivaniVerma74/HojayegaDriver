@@ -51,7 +51,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return
       Scaffold(
       backgroundColor: colors.backgroundcolor,
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height/1.0,
           decoration: const BoxDecoration(
@@ -60,7 +61,8 @@ class _SignupScreenState extends State<SignupScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          child:Column(
+          child:
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children:  [
               const Padding(
@@ -127,7 +129,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     ],
                                   ),
                                   child: TextFormField(
-                                    maxLength: 10,
+                                    // maxLength: 10,
                                     controller: emailCtr,
                                     keyboardType: TextInputType.text,
                                     decoration: const InputDecoration(

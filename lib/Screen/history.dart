@@ -133,7 +133,7 @@ class _HistoryState extends State<History> {
               const OrderTable(title: "Order No.", description: "Order No."),
               const OrderTable(title: "From", description: "From"),
               const OrderTable(title: " To ", description: "To"),
-              OrderTable(title: "COD/Online", description: "COD/Online"),
+              const OrderTable(title: "COD/Online", description: "COD/Online"),
               const OrderTable(title: "Rs.", description: "Rs."),
             ],
           ),
@@ -188,20 +188,6 @@ class _HistoryState extends State<History> {
                           showDate = false;
                         });
                       }
-
-                      // DateTime? selectedDate2 = await showDatePicker(
-                      //     context: context,
-                      //     initialDate: DateTime.now(),
-                      //     firstDate: DateTime.now(),
-                      //     lastDate: DateTime(2023, 12, 31));
-
-                      // if (selectedDate != null) {
-                      //   setState(() {
-                      //     date2 =
-                      //         "${selectedDate2.day}/${selectedDate2.month}/${selectedDate2.year}";
-                      //     showDate2 = true;
-                      //   });
-                      // }
                     },
                     icon: const Icon(
                       Icons.calendar_month_outlined,
@@ -223,20 +209,6 @@ class _HistoryState extends State<History> {
                           showDate = true;
                         });
                       }
-
-                      // DateTime? selectedDate2 = await showDatePicker(
-                      //     context: context,
-                      //     initialDate: DateTime.now(),
-                      //     firstDate: DateTime.now(),
-                      //     lastDate: DateTime(2023, 12, 31));
-
-                      // if (selectedDate != null) {
-                      //   setState(() {
-                      //     date2 =
-                      //         "${selectedDate2.day}/${selectedDate2.month}/${selectedDate2.year}";
-                      //     showDate2 = true;
-                      //   });
-                      // }
                     },
                     icon: const Icon(
                       Icons.calendar_month_outlined,

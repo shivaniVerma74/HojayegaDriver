@@ -170,17 +170,16 @@ class _VehicleInformationState extends State<VehicleInformation> {
   }
 
   int selectedVehicle = 0;
-  String dropdownvalue = 'Mp';
 
-  // List of items in our dropdown menu
+  String dropdownvalue = 'Mp';
   var itemsState = [
     'Mp',
     'RJ',
     'HP',
     'UP',
   ];
-  String dropdowncity = 'Indore';
 
+  String dropdowncity = 'Indore';
   // List of items in our dropdown menu
   var itemsCity = [
     'Indore',
@@ -332,7 +331,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -386,7 +385,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -437,7 +436,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -488,7 +487,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -502,7 +501,8 @@ class _VehicleInformationState extends State<VehicleInformation> {
                       ),
                     ],
                   ),
-                  child: DropdownButton(
+                  child:
+                  DropdownButton(
                     isExpanded: true,
                     value: stateValue,
                     hint: const Text('State'),
@@ -510,7 +510,8 @@ class _VehicleInformationState extends State<VehicleInformation> {
                     icon: const Icon(Icons.keyboard_arrow_down),
                     // Array list of items
                     items: stateList.map((items) {
-                      return DropdownMenuItem(
+                      return
+                        DropdownMenuItem(
                         value: items,
                         child: Container(
                             child: Text(items.name.toString())),
@@ -607,7 +608,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -625,7 +626,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   DropdownButton(
                     isExpanded: true,
                     value: cityValue,
-                    hint: Text('City'),
+                    hint: const Text('City'),
                     // Down Arrow Icon
                     icon: const Icon(Icons.keyboard_arrow_down),
                     // Array list of items
@@ -704,7 +705,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
           //     ],
           //   ),
           // ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Container(
@@ -725,7 +726,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -754,7 +755,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Container(
@@ -775,7 +776,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -826,7 +827,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   width: 10,
                 ),
                 Container(
-                  width: 260,
+                  width: 240,
                   height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,

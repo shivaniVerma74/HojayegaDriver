@@ -7,6 +7,7 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:http/http.dart' as http;
+import 'package:pinput/pinput.dart';
 import '../Helper/color.dart';
 import 'Personalinformation.dart';
 import 'loginscreen.dart';
@@ -21,63 +22,93 @@ class VerifyScreen extends StatefulWidget {
 }
 
 class _VerifyScreenState extends State<VerifyScreen> {
-
- veiftOtp() async {
-   var headers = {
-     'Cookie': 'ci_session=10873cb2999e1c54a849c86e08d065f53a4803f5'
-   };
-   var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.veriftOtp));
-   request.fields.addAll({
-     'identity': widget.MOBILE,
-     'otp': enteredOtp.toString(),
-   });
-
-   request.headers.addAll(headers);
-   http.StreamedResponse response = await request.send();
-   if (response.statusCode == 200) {
-     print("worikng#####");
-     var finalResponse = await response.stream.bytesToString();
-     final jsonresponse = json.decode(finalResponse);
-     if (jsonresponse['error'] == false) {
-       Fluttertoast.showToast(msg: '${jsonresponse['message']}');
-       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PersonalInformation()));
-     } else {
-       Fluttertoast.showToast(msg: "${jsonresponse['message']}");
-     }
-   }
-   else {
-     print(response.reasonPhrase);
-   }
- }
+  veiftOtp() async {
+    var headers = {
+      'Cookie': 'ci_session=10873cb2999e1c54a849c86e08d065f53a4803f5'
+    };
+    var request =
+        http.MultipartRequest('POST', Uri.parse(ApiServicves.veriftOtp));
+    request.fields.addAll({
+      'identity': widget.MOBILE,
+      'otp': pin.text,
+    });
+   print("=======otp verify parameter${request.fields}===========");
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      print("worikng#####");
+      var finalResponse = await response.stream.bytesToString();
+      final jsonresponse = json.decode(finalResponse);
+      if (jsonresponse['error'] == false) {
+        Fluttertoast.showToast(msg: '${jsonresponse['message']}');
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => PersonalInformation()));
+      } else {
+        Fluttertoast.showToast(msg: "${jsonresponse['message']}");
+      }
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
 
   OtpFieldController controller = OtpFieldController();
   FocusNode focusNode = FocusNode();
   String? enteredOtp;
+  final _formKey = GlobalKey<FormState>();
+  var pin = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: const TextStyle(fontSize: 20, color:Colors.white, fontWeight: FontWeight.w600),
+      decoration: BoxDecoration(
+        color:colors.primary,
+        border: Border.all(color: colors.primary,),
+        borderRadius: BorderRadius.circular(6),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+      border: Border.all(color:  colors.primary,),
+      borderRadius: BorderRadius.circular(6),
+    );
+    final submittedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration?.copyWith(
+        color:  colors.primary,
+      ),
+    );
     return Scaffold(
       backgroundColor: colors.backgroundcolor,
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height/1.0,
+          height: MediaQuery.of(context).size.height / 1.0,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/otpback.png"),
               fit: BoxFit.fill,
             ),
           ),
-          child:Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children:  [
+            children: [
               const Padding(
                 padding: EdgeInsets.only(top: 50, left: 20),
-                child: Text("OTP Verification", style: TextStyle(fontWeight: FontWeight.bold, color: colors.white, fontSize: 24)),
+                child: Text("OTP Verification",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: colors.white,
+                        fontSize: 24)),
               ),
               const Padding(
-                padding:EdgeInsets.only(top: 15, left: 20, right: 10),
-                child: Text("Please enter OTP received on your mobile number to continue.",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: colors.white, fontSize: 15)),
+                padding: EdgeInsets.only(top: 15, left: 20, right: 10),
+                child: Text(
+                    "Please enter OTP received on your mobile number to continue.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: colors.white,
+                        fontSize: 15)),
               ),
               // const Padding(
               //   padding:EdgeInsets.only(top: 15, left: 20, right: 10),
@@ -86,72 +117,64 @@ class _VerifyScreenState extends State<VerifyScreen> {
               // ),
               const SizedBox(height: 20),
               Center(
-                  child: Image.asset("assets/images/verification.png", scale: 1.9)),
+                  child: Image.asset("assets/images/verification.png",
+                      scale: 1.9)),
               const SizedBox(height: 25),
               Column(
                 children: [
-                 Text("OTP: ${widget.OTP}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 15),),
+                  Text(
+                    "OTP: ${widget.OTP}",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 15),
+                  ),
                   Center(
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
+                          borderRadius: BorderRadius.circular(10)),
                       elevation: 4,
                       child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30)),
                         height: 200,
-                        width: MediaQuery.of(context).size.width/1.2,
+                        width: MediaQuery.of(context).size.width / 1.2,
                         child: Column(
                           children: [
                             Padding(
-                                padding: EdgeInsets.all(10),
-                                child:OTPTextField (
-                                  controller: controller,
-                                  length: 4,
-                                  keyboardType: TextInputType.number,
-                                  width: MediaQuery.of(context).size.width,
-                                  textFieldAlignment: MainAxisAlignment.spaceEvenly,
-                                  fieldWidth: 50,
-                                  contentPadding: const EdgeInsets.all(11),
-                                  fieldStyle: FieldStyle.box,
-                                  outlineBorderRadius: 15,
-                                  otpFieldStyle: OtpFieldStyle(
-                                      backgroundColor: Color(0xFF112C48),
-                                      disabledBorderColor: Colors.white
+                              padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+                              child: SizedBox(
+                                width: 250,
+                                child: Form(
+                                  key: _formKey,
+                                  child: Pinput(
+                                    controller:pin ,
+                                    defaultPinTheme: defaultPinTheme,
+                                    focusedPinTheme: focusedPinTheme,
+                                    submittedPinTheme: submittedPinTheme,
+                                    validator: (s) {
+                                      return s == '${widget.OTP}' ? null : 'Pin is incorrect';
+                                    },
+                                    pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+                                    showCursor: true,
+                                    onCompleted: (pin) => debugPrint('enter pin'),
                                   ),
-                                  style: const TextStyle(fontSize: 17, height: 2.2),
-                                  onChanged: (pin) {
-                                    print("checking pin here $pin");
-                                  },
-                                  onCompleted: (pin) {
-                                    if (pin.isNotEmpty && pin.length == 4) {
-                                      setState(() {
-                                        enteredOtp = pin;
-                                      });
-                                    } else {
-                                    }
-                                  },
                                 ),
+                              ),
                             ),
                             const SizedBox(height: 40),
                             Container(
                               height: 40,
-                              width: MediaQuery.of(context).size.width/1.4,
+                              width: MediaQuery.of(context).size.width / 1.4,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: colors.secondary, // Background color
                                   onPrimary: Colors.amber, // Text Color (Foreground color)
                                 ),
-                                child: const Text("Verify", style: TextStyle(color: Colors.white, fontSize: 18)),
+                                child: const Text("Verify",
+                                    style: TextStyle(color: Colors.white, fontSize: 18)),
                                 onPressed: () {
                                   veiftOtp();
-                                //   if(enteredOtp == widget.OTP) {
-                                //     veiftOtp();
-                                //   }
-                                //   else {
-                                //     Fluttertoast.showToast(msg: "Please enter valid Otp");
-                                //   }
-                                //   // Navigator.push(context, MaterialPageRoute(builder: (context) => const PersonalInformation()));
                                 },
                               ),
                             ),

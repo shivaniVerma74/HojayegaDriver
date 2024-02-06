@@ -445,6 +445,7 @@ class _HomePageState extends State<HomePage> {
      } else {
        Fluttertoast.showToast(msg: "${jsonresponse['message']}");
      }
+     getorder('');
    }
    else {
      print(response.reasonPhrase);
@@ -550,7 +551,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-
   String? kilometers;
   String? productName;
   String? productId;
@@ -819,7 +819,7 @@ void listToString() {
       selectedString = "$selectedString,"+selectNew[i];
     }
   }
-  print(selectedString);
+  print("tap is herer${selectedString}");
 }
 
   bool _isChecked = false;
@@ -841,53 +841,50 @@ void listToString() {
               Container(
                 height: 90,
                 width: 80,
-                child: Image.network("https://developmentalphawizz.com/hojayega/uploads/profile_pics/${getorders?.data?[index].image}"),
+                child: Image.network("https://developmentalphawizz.com/hojayega/uploads/profile_pics/${getorders?.data?[index].productImage}"),
               ),
               Column(
                 children: [
-                  SizedBox(height: 4,),
+                  const SizedBox(height: 4,),
                   Row(
                     children: [
                       Text(
-                        "${getorders?.data?[index].fromTime}",
+                        "${getorders?.data?[index].time}".replaceAll('From', ""),
                         style: const TextStyle(color: colors.red),
                       ),
-                      Text(
-                        "${getorders?.data?[index].toTime}",
-                        style: const TextStyle(color: colors.red),
-                      ),
+                      // Text(
+                      //   "${getorders?.data?[index].toTime}",
+                      //   style: const TextStyle(color: colors.red),
+                      // ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        "${getorders?.data?[index].distance}", overflow: TextOverflow.ellipsis,
+                        double.parse("${getorders?.data?[index].distance}").toStringAsFixed(2)+" KM", overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: colors.red),
                       ),
                     ],
                   ),
-                  SizedBox(height: 7,),
-                  getorders?.data?[index].productType == "1"?
-                  const Text("Food",style: TextStyle(fontWeight: FontWeight.w700)):
-                      getorders?.data?[index].productType == "2"?
-                          const Text("conton", style: TextStyle(fontWeight: FontWeight.w700),):
-                          getorders?.data?[index].productType == "3"?
-                          const Text("Flower",style: TextStyle(fontWeight: FontWeight.w700)):
-                              getorders?.data?[index].productType == "4"?
-                                  const Text("K frazile",style: TextStyle(fontWeight: FontWeight.w700)): SizedBox(),
+                  const SizedBox(height: 7,),
+                   Text("${getorders?.data?[index].orderType}",style: TextStyle(fontWeight: FontWeight.w700)),
                   const SizedBox(height: 7),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/images/location.png", color: colors.red, scale: 1.8),
-                      Text("${getorders?.data?[index].pickupAddress}", overflow: TextOverflow.ellipsis, maxLines: 2,),
+                      Container(
+                        width: 140,
+                          child: Text("${getorders?.data?[index].deliveredAddress}", overflow: TextOverflow.ellipsis, maxLines: 1,)),
                     ],
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                      Image.asset("assets/images/location.png", color: colors.red, scale: 1.8,),
-                      Text("${getorders?.data?[index].dropAddress}"),
+                      Container(
+                          width: 140,
+                          child: Text("${getorders?.data?[index].pickupAddress}")),
                     ],
                   ),
                 ],
@@ -899,8 +896,8 @@ void listToString() {
                   children: [
                     InkWell(
                       onTap: () {
-                        _isChecked= !_isChecked;
                         setState(() {
+                          _isChecked= !_isChecked;
                       //  if(selectNew.contains(getorders?.data?[index].id.toString())) {
                       //  selectNew.remove(getorders?.data?[index].id.toString());
                       // print("true  ${selectNew[index]['id']}");
@@ -908,19 +905,17 @@ void listToString() {
                       // selectNew.add(getorders?.data?[index].id.toString());
                       // print("false  ${selectNew[index]['id'].toString()}");
                       // }
-
-                          if(selectNew.contains(getorders!.data?[index].id.toString())){
-                            selectNew.remove(getorders?.data?[index].id.toString());
+                          if(selectNew.contains(getorders!.data?[index].orderId.toString())){
+                            selectNew.remove(getorders?.data?[index].orderId.toString());
                           }else{
-                            selectNew.add(getorders?.data?[index].id.toString());
+                            selectNew.add(getorders?.data?[index].orderId.toString());
                           }
                         });
-
                         listToString();
                         setState(() {});
                       },
                       child: Icon(
-                        selectNew.contains(getorders?.data?[index].id.toString())
+                        selectNew.contains(getorders?.data?[index].orderId.toString())
                             ? Icons.check_box_outlined
                             : Icons.check_box_outline_blank,
                         color: colors.secondary,
@@ -941,16 +936,17 @@ void listToString() {
                     //   },
                     // ),
                     getorders?.data?[index].vehicleType == "1" ?
-                    Image.asset("assets/images/car.png", scale: 1.7):
-                    getorders?.data?[index].vehicleType == "2" ?
-                    Image.asset("assets/images/auto.png",scale: 1.7):
-                    getorders?.data?[index].vehicleType == "3" ?
                     Image.asset("assets/images/bike.png", scale: 1.7):
+                    getorders?.data?[index].vehicleType == "2" ?
+                    Image.asset("assets/images/electricbike.png",scale: 1.3):
+                    getorders?.data?[index].vehicleType == "3" ?
+                    Image.asset("assets/images/car.png", scale: 1.7):
                     getorders?.data?[index].vehicleType == "4" ?
-                    Image.asset("assets/images/truck.png",scale: 1.7):
-                        const SizedBox(height: 10,),
-                    getorders?.data?[index].amount == null || getorders?.data?[index].amount == "" ? const Text('₹ 0.0'):
-                    Text("₹ ${getorders?.data?[index].amount}")
+                    Image.asset("assets/images/taxi.png",scale: 1.3):
+                    getorders?.data?[index].vehicleType == "5" ?
+                    Image.asset("assets/images/truck.png",scale: 1.7) : const SizedBox(height: 10,),
+                    getorders?.data?[index].total == null || getorders?.data?[index].total == "" ? const Text('₹ 0.0'):
+                    Text("₹ ${getorders?.data?[index].total}")
                   ],
                 ),
               ),
@@ -959,7 +955,6 @@ void listToString() {
       ),
     );
   }
-
 
 
   List<String> tList = [
@@ -1112,8 +1107,7 @@ void listToString() {
   CollectionReference collectionRef = FirebaseFirestore.instance.collection("driverlocation");
 
  int selected = 0;
-  Widget tileList(
-      {required String title, required IconData icon, required int index}) {
+  Widget tileList({required String title, required IconData icon, required int index}) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       onTap: () {
@@ -1122,8 +1116,7 @@ void listToString() {
         });
         if (selected==0) {
           Navigator.push(
-            context,
-            MaterialPageRoute(
+            context, MaterialPageRoute(
                 builder: (context) => MyProfile()
             ),
           );
@@ -1209,7 +1202,7 @@ void listToString() {
   }
 }
 
-logout(context) async {
+ logout(context) async {
   return showDialog(
         context: context,
         barrierDismissible: false,

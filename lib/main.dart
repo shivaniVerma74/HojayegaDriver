@@ -12,7 +12,7 @@ void main() async {
   await Firebase.initializeApp();
   try{
     String? token = await FirebaseMessaging.instance.getToken();
-    print("--device------token:-----${token}");
+    print("--device------token:-----$token");
   } on FirebaseException{
     print('_____FirebaseException________');
   }
