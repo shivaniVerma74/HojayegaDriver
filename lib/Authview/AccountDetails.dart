@@ -188,6 +188,10 @@ class _AccountDetailsState extends State<AccountDetails> {
             padding: const EdgeInsets.only(top: 600),
             child: InkWell(
               onTap: () {
+                print("accoynt detailssss${banknamectr.text} ${widget.Date} ${widget.lat} "
+                    "${widget.Pincode} ${widget.VehicleType} ${widget.Vehicle}"
+                    " ${widget.Pincode} ${widget.Zip} ${widget.City} ${widget.States} ${widget.Address} ${widget.ConfirmPassword}"
+                    "${banknamectr.text} ${qrImage!.path}===========");
                 Navigator.push(context, MaterialPageRoute(builder: (contextn) => KycInformationScreen()));
                 if(banknamectr.text.length == 0 ||
                     acoountCtr.text.length == 0
@@ -196,12 +200,16 @@ class _AccountDetailsState extends State<AccountDetails> {
                 ) {
                   Fluttertoast.showToast(msg: "Please Fill All Fields");
                 } else {
+                  print("accoynt detailssss herererer${banknamectr.text} ${widget.Date} ${widget.lat} "
+                      "${widget.Pincode} ${widget.VehicleType} ${widget.Vehicle}"
+                      " ${widget.Pincode} ${widget.Zip} ${widget.City} ${widget.States} ${widget.Address} ${widget.ConfirmPassword}"
+                      "${banknamectr.text} ${qrImage!.path}===========");
                   Navigator.push(context, MaterialPageRoute(builder: (context) => KycInformationScreen(
                       Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
                       Date: widget.Date, Vehicle: widget.VehicleType, Contact: widget.Contact, Address: widget.Address,
-                      States: stateValue.toString(), City: cityValue.toString(), Region: widget.Region, Zip: widget.Zip,
-                      lat: widget.lat, long: widget.long, VehicleType: selectedVehicle.toString(), Pincode: widget.Pincode,
-                    BankName: banknamectr.text, AccountNumber: acoountCtr.text, Ifsc: ifscCtr.text, UpiId: upiCtr.text, QrImage: qrImage.toString(),),
+                      States: widget.States.toString(), City: widget.City.toString(), Region: widget.Region, Zip: widget.Zip,
+                      lat: widget.lat, long: widget.long, VehicleType: widget.VehicleType.toString(), Pincode: widget.Pincode,
+                    BankName: banknamectr.text, AccountNumber: acoountCtr.text, Ifsc: ifscCtr.text, UpiId: upiCtr.text, QrImage: qrImage!.path,),
                   ),
                   );
                 }
@@ -410,6 +418,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                     ],
                   ),
                   child: TextFormField(
+                    maxLength: 14,
                     controller: acoountCtr,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
@@ -460,8 +469,9 @@ class _AccountDetailsState extends State<AccountDetails> {
                     ],
                   ),
                   child: TextFormField(
+                    maxLength: 11,
                     controller: ifscCtr,
-                    keyboardType: TextInputType.number,
+                   // keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                         counterText: "",
                         // suffixIcon: suffixIcons,
@@ -725,6 +735,7 @@ class _AccountDetailsState extends State<AccountDetails> {
             ElevatedButton(
               onPressed: () {
                 pickImage(ImageSource.gallery, type);
+                Navigator.pop(context);
                 // getImage(ImageSource.camera, context, 1);
               },
               child: Text('Gallery'),
@@ -735,6 +746,7 @@ class _AccountDetailsState extends State<AccountDetails> {
             ElevatedButton(
               onPressed: () {
                 pickImage(ImageSource.camera, type);
+                Navigator.pop(context);
               },
               child: Text('Camera'),
             ),

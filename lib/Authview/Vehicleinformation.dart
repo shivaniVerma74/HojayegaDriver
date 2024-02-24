@@ -5,21 +5,21 @@ import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hojayegadriverapp/Authview/AccountDetails.dart';
-import 'package:hojayegadriverapp/Authview/KycDetails.dart';
-import 'package:hojayegadriverapp/Authview/RegistrationFees.dart';
 import 'package:hojayegadriverapp/Helper/api.path.dart';
 import 'package:http/http.dart' as http;
 import '../Helper/color.dart';
 import '../Model/CityModel.dart';
+import '../Model/GetAreaModel.dart';
 import '../Model/StateModel.dart';
 
 class VehicleInformation extends StatefulWidget {
+  final mobile;
   final Name;
   final Email;
   final Passowrd;
   final ConfirmPassword;
   final Date;
-  const VehicleInformation({super.key, this.Date, this.Email, this.ConfirmPassword, this.Name, this.Passowrd});
+  const VehicleInformation({super.key, this.Date, this.Email, this.ConfirmPassword, this.Name, this.Passowrd, this.mobile});
 
   @override
   State<VehicleInformation> createState() => _VehicleInformationState();
@@ -46,10 +46,11 @@ class _VehicleInformationState extends State<VehicleInformation> {
   ];
 
   List<String> imagesList = [
-    "assets/images/car.png",
+    "assets/images/cycle.png",
+    "assets/images/scooter.png",
     "assets/images/bike.png",
     "assets/images/auto.png",
-    "assets/images/truck.png"
+    "assets/images/tempo.png",
   ];
 
   bool selected = false;
@@ -190,8 +191,10 @@ class _VehicleInformationState extends State<VehicleInformation> {
   List<CityData> cityList = [];
   List<StataData> stateList = [];
   CityData? cityValue;
+  String? cityId;
   StataData? stateValue;
   String? stateName;
+  String? stateId;
   String? cityName;
 
   getstate() async {
@@ -242,6 +245,34 @@ class _VehicleInformationState extends State<VehicleInformation> {
     }
 }
 
+  List<CountryData> countryList = [];
+  CountryData? countryValue;
+  String? countryId;
+
+  getArea(String? city_Id) async {
+    var headers = {
+      'Cookie': 'ci_session=cb5a399c036615bb5acc0445a8cd39210c6ca648'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getArea));
+    request.fields.addAll({
+      'city_id': city_Id.toString()
+    });
+    print("get aresaa ${request.fields}");
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      String responseData = await response.stream.transform(utf8.decoder).join();
+      var userData = json.decode(responseData);
+      if (mounted) {
+        setState(() {
+          countryList = GetAreaModel.fromJson(userData).data!;
+        });
+      }
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+  }
+
   Widget vehicalInformatin() {
     return Form(
       child: Column(
@@ -277,7 +308,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
-              itemCount: 4,
+              itemCount: 5,
               itemBuilder: (context, index) {
                 return Row(
                   children: [
@@ -295,10 +326,10 @@ class _VehicleInformationState extends State<VehicleInformation> {
                         size: 20,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
-                    Image.asset(imagesList[index], scale: 2,),
+                    Image.asset(imagesList[index], scale: 0.3),
                   ],
                 );
               },
@@ -312,7 +343,6 @@ class _VehicleInformationState extends State<VehicleInformation> {
           const SizedBox(
             height: 10,
           ),
-
           Container(
             width: MediaQuery.of(context).size.width,
             child: Row(
@@ -347,7 +377,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   ),
                   child: TextFormField(
                     controller: vehiclectr,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
                         counterText: "",
                         // suffixIcon: suffixIcons,
@@ -364,57 +394,57 @@ class _VehicleInformationState extends State<VehicleInformation> {
           //     hint: 'Vehicle Number',
           //     icon: Icons.nine_mp_rounded,
           //     textEditingController: vehiclectr),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                      width: 40,
-                      height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  width: 240,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(1.0, 1.0,),
-                        blurRadius: 0.2,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    controller: contachCtr,
-                    maxLength: 10,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                        counterText: "",
-                        // suffixIcon: suffixIcons,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        hintText: "Contact Number"
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Material(
+          //         elevation: 4,
+          //         borderRadius: BorderRadius.circular(10),
+          //         child: Container(
+          //             width: 40,
+          //             height: 40,
+          //             child: Image.asset("assets/images/person.png",scale: 1.5,)
+          //         ),
+          //       ),
+          //       const SizedBox(
+          //         width: 10,
+          //       ),
+          //       Container(
+          //         width: 240,
+          //         height: 45,
+          //         decoration: BoxDecoration(
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.circular(5),
+          //           boxShadow: const [
+          //             BoxShadow(
+          //               color: Colors.grey,
+          //               offset: Offset(1.0, 1.0,),
+          //               blurRadius: 0.2,
+          //               spreadRadius: 0.5,
+          //             ),
+          //           ],
+          //         ),
+          //         child: TextFormField(
+          //           controller: contachCtr,
+          //           maxLength: 10,
+          //           keyboardType: TextInputType.number,
+          //           decoration: const InputDecoration(
+          //               counterText: "",
+          //               // suffixIcon: suffixIcons,
+          //               contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          //               border: OutlineInputBorder(borderSide: BorderSide.none),
+          //               hintText: "Contact Number"
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           const SizedBox(
             height: 10,
           ),
@@ -480,7 +510,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   child: Container(
                       width: 40,
                       height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
+                      child: Image.asset("assets/images/state.png",scale: 1.5,)
                   ),
                 ),
                 const SizedBox(
@@ -505,7 +535,10 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   DropdownButton(
                     isExpanded: true,
                     value: stateValue,
-                    hint: const Text('State'),
+                    hint: const Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: Text('State'),
+                    ),
                     // Down Arrow Icon
                     icon: const Icon(Icons.keyboard_arrow_down),
                     // Array list of items
@@ -513,8 +546,11 @@ class _VehicleInformationState extends State<VehicleInformation> {
                       return
                         DropdownMenuItem(
                         value: items,
-                        child: Container(
-                            child: Text(items.name.toString())),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Container(
+                              child: Text(items.name.toString())),
+                        ),
                       );
                     }).toList(),
                     // After selecting the desired option,it will
@@ -524,7 +560,8 @@ class _VehicleInformationState extends State<VehicleInformation> {
                         stateValue = value!;
                         getCity("${stateValue!.id}");
                         stateName = stateValue!.name;
-                        print("name herererb $stateName");
+                        stateId = stateValue!.id;
+                        print("name herererb $stateName $stateId");
                       });
                     },
                     underline: Container(),
@@ -587,10 +624,10 @@ class _VehicleInformationState extends State<VehicleInformation> {
           //     ],
           //   ),
           // ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -601,7 +638,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   child: Container(
                       width: 40,
                       height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
+                      child: Image.asset("assets/images/state.png",scale: 1.5,)
                   ),
                 ),
                 const SizedBox(
@@ -626,15 +663,21 @@ class _VehicleInformationState extends State<VehicleInformation> {
                   DropdownButton(
                     isExpanded: true,
                     value: cityValue,
-                    hint: const Text('City'),
+                    hint: const Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: Text('City'),
+                    ),
                     // Down Arrow Icon
                     icon: const Icon(Icons.keyboard_arrow_down),
                     // Array list of items
                     items: cityList.map((items) {
                       return DropdownMenuItem(
                         value: items,
-                        child: Container(
-                            child: Text(items.name.toString())),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Container(
+                              child: Text(items.name.toString())),
+                        ),
                       );
                     }).toList(),
                     // After selecting the desired option,it will
@@ -643,7 +686,84 @@ class _VehicleInformationState extends State<VehicleInformation> {
                       setState(() {
                         cityValue = value!;
                         cityName = cityValue!.name;
+                        cityId = cityValue!.id;
+                        getArea("${cityValue!.id}");
                         print("name herererb cityytyty $cityName");
+                      });
+                    },
+                    underline: Container(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      child: Image.asset("assets/images/region.png",scale: 1.5,)
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  width: 240,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(1.0, 1.0,),
+                        blurRadius: 0.2,
+                        spreadRadius: 0.5,
+                      ),
+                    ],
+                  ),
+                  child:
+                  DropdownButton(
+                    isExpanded: true,
+                    value: countryValue,
+                    hint: const Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: Text('Region'),
+                    ),
+                    // Down Arrow Icon
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    // Array list of items
+                    items: countryList.map((items) {
+                      return
+                        DropdownMenuItem(
+                          value: items,
+                          child: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Text(items.name.toString()),
+                              )),
+                        );
+                    }).toList(),
+                    // After selecting the desired option,it will
+                    // change button value to selected value
+                    onChanged: (CountryData? value) {
+                      setState(() {
+                        countryValue = value!;
+                        countryId = countryValue!.id;
+                        // getstate("${countryValue!.id}");
+                        // ("${stateValue!.id}");
+                        // stateName = stateValue!.name;
+                        print("name herererb $countryId");
                       });
                     },
                     underline: Container(),
@@ -705,10 +825,60 @@ class _VehicleInformationState extends State<VehicleInformation> {
           //     ],
           //   ),
           // ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Material(
+          //         elevation: 4,
+          //         borderRadius: BorderRadius.circular(10),
+          //         child: Container(
+          //             width: 40,
+          //             height: 40,
+          //             child: Image.asset("assets/images/person.png",scale: 1.5,)
+          //         ),
+          //       ),
+          //       const SizedBox(
+          //         width: 10,
+          //       ),
+          //       Container(
+          //         width: 240,
+          //         height: 45,
+          //         decoration: BoxDecoration(
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.circular(5),
+          //           boxShadow: const [
+          //             BoxShadow(
+          //               color: Colors.grey,
+          //               offset: Offset(1.0, 1.0,),
+          //               blurRadius: 0.2,
+          //               spreadRadius: 0.5,
+          //             ),
+          //           ],
+          //         ),
+          //         child: TextFormField(
+          //           controller: regionCtr,
+          //           keyboardType: TextInputType.text,
+          //           decoration: const InputDecoration(
+          //               counterText: "",
+          //               // suffixIcon: suffixIcons,
+          //               contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          //               border: OutlineInputBorder(borderSide: BorderSide.none),
+          //               hintText: "Region"
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           const SizedBox(
             height: 10,
           ),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -716,7 +886,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                 Material(
                   elevation: 4,
                   borderRadius: BorderRadius.circular(10),
-                  child: Container(
+                  child: SizedBox(
                       width: 40,
                       height: 40,
                       child: Image.asset("assets/images/person.png",scale: 1.5,)
@@ -734,57 +904,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.grey,
-                        offset: Offset(1.0, 1.0,),
-                        blurRadius: 0.2,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    controller: regionCtr,
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                        counterText: "",
-                        // suffixIcon: suffixIcons,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        hintText: "Region"
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                      width: 40,
-                      height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  width: 240,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(1.0, 1.0,),
+                        offset: Offset(1.0, 1.0),
                         blurRadius: 0.2,
                         spreadRadius: 0.5,
                       ),
@@ -809,73 +929,75 @@ class _VehicleInformationState extends State<VehicleInformation> {
           const SizedBox(
             height: 10,
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                      width: 40,
-                      height: 40,
-                      child: Image.asset("assets/images/person.png",scale: 1.5,)
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  width: 240,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(1.0, 1.0,),
-                        blurRadius: 0.2,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    controller: zipCtr,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                        counterText: "",
-                        // suffixIcon: suffixIcons,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                        border: OutlineInputBorder(borderSide: BorderSide.none),
-                        hintText: "Zipcode"
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Material(
+          //         elevation: 4,
+          //         borderRadius: BorderRadius.circular(10),
+          //         child: Container(
+          //             width: 40,
+          //             height: 40,
+          //             child: Image.asset("assets/images/person.png",scale: 1.5,)
+          //         ),
+          //       ),
+          //       const SizedBox(
+          //         width: 10,
+          //       ),
+          //       // Container(
+          //       //   width: 240,
+          //       //   height: 45,
+          //       //   decoration: BoxDecoration(
+          //       //     color: Colors.white,
+          //       //     borderRadius: BorderRadius.circular(5),
+          //       //     boxShadow: const [
+          //       //       BoxShadow(
+          //       //         color: Colors.grey,
+          //       //         offset: Offset(1.0, 1.0,),
+          //       //         blurRadius: 0.2,
+          //       //         spreadRadius: 0.5,
+          //       //       ),
+          //       //     ],
+          //       //   ),
+          //       //   child: TextFormField(
+          //       //     controller: zipCtr,
+          //       //     keyboardType: TextInputType.number,
+          //       //     decoration: const InputDecoration(
+          //       //         counterText: "",
+          //       //         // suffixIcon: suffixIcons,
+          //       //         contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          //       //         border: OutlineInputBorder(borderSide: BorderSide.none),
+          //       //         hintText: "Zipcode"
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //     ],
+          //   ),
+          // ),
+          // const SizedBox(
+          //   height: 30,
+          // ),
           InkWell(
             onTap: () {
+              print("vehicle information${vehiclectr.text}${contachCtr.text}${addressCtr.text}${regionCtr.text}${zipCtr.text}$stateId$cityId"
+                  "${regionCtr.text}${addressCtr.text}$selectedVehicle");
               // Navigator.push(context, MaterialPageRoute(builder: (contextn) => KycInformationScreen()));
-              if(vehiclectr.text.length == 0 ||
-              contachCtr.text.length == 0
+              if(vehiclectr.text.length == 0
               || addressCtr.text.length == 0 ||
-              regionCtr.text.length == 0 || zipCtr.text.length == 0
+                  pincodeCtr.text.length == 0 || countryValue == false || cityValue == false || stateValue == false
                ) {
                Fluttertoast.showToast(msg: "Please Fill All Fields");
               } else {
+                print("vehicle information to hererer${vehiclectr.text}${contachCtr.text}${addressCtr.text}${regionCtr.text}${zipCtr.text}  $stateId  $cityId ${regionCtr.text}");
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AccountDetails(
                     Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
-                    Date: widget.Date, Vehicle: vehiclectr.text, Contact: contachCtr.text, Address: addressCtr.text,
-                    States: stateValue.toString(), City: cityValue.toString(), Region: regionCtr.text, Zip: zipCtr.text,
+                    Date: widget.Date, Vehicle: vehiclectr.text, Contact: widget.mobile, Address: addressCtr.text,
+                    States: stateId.toString(), City: cityId.toString(), Region: countryId.toString(), Zip: zipCtr.text,
                     lat: latitude.toString(), long: longitudes.toString(), VehicleType: selectedVehicle.toString(), Pincode: pincodeCtr.text
-                ),
-                ),
+                     ),
+                   ),
                 );
               }
             },

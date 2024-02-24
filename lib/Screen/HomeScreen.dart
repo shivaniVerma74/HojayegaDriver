@@ -360,7 +360,7 @@ class _HomePageState extends State<HomePage> {
 
   getUserCurrentLocation() async {
     var status = await Permission.location.request();
-    print("location status ${status}");
+    print("location status $status");
     if (status.isDenied) {
       Fluttertoast.showToast(msg: "Permision is requiresd");
     } else if (status == PermissionStatus.granted) {
@@ -376,6 +376,7 @@ class _HomePageState extends State<HomePage> {
             print("home lat long is $homeLong &&& $homelat");
           });
           addData();
+          getorder('');
         }
       });
     } else if (status.isPermanentlyDenied) {
@@ -392,6 +393,36 @@ class _HomePageState extends State<HomePage> {
       Permission.location.request();
     }
   }
+
+  GetOrdersModel? getorders;
+
+  getorder(String? pName) async {
+    var headers = {
+      'Cookie': 'ci_session=c7d2b39c49dc5b58162745cb0cd59306be7f8893'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getOrders));
+    request.fields.addAll({
+      'lat': currentLocation!.latitude.toString(),
+      'lang': currentLocation!.longitude.toString(),
+      // "product_name":pName == "Food" ? "1":  pName== "conton" ? "2" :pName== "flower" ? "3" : "4"
+    });
+    print("get order parameter ${request.fields}");
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      var finalResponse = await response.stream.bytesToString();
+      final finalResult = GetOrdersModel.fromJson(json.decode(finalResponse));
+      print("responseeee $finalResult");
+      setState(() {
+        getorders = finalResult;
+      });
+      // await serachProduct();
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+  }
+
 
   GetProfileModel? getProfileModel;
   getDriverProfile() async {
@@ -452,34 +483,6 @@ class _HomePageState extends State<HomePage> {
    }
  }
 
-  GetOrdersModel? getorders;
-
-  getorder(String? pName) async {
-    var headers = {
-      'Cookie': 'ci_session=c7d2b39c49dc5b58162745cb0cd59306be7f8893'
-    };
-    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getOrders));
-    request.fields.addAll({
-      'lat': "22.7549629",
-      'lang': "75.8622462",
-       // "product_name":pName == "Food" ? "1":  pName== "conton" ? "2" :pName== "flower" ? "3" : "4"
-    });
-    print("get order parameter ${request.fields}");
-    request.headers.addAll(headers);
-    http.StreamedResponse response = await request.send();
-    if (response.statusCode == 200) {
-      var finalResponse = await response.stream.bytesToString();
-      final finalResult = GetOrdersModel.fromJson(json.decode(finalResponse));
-      print("responseeee $finalResult");
-      setState(() {
-        getorders = finalResult;
-      });
-      // await serachProduct();
-    }
-    else {
-      print(response.reasonPhrase);
-    }
-  }
 
 
   Future<Null> _refresh() {
@@ -487,6 +490,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Null> callApi() async {
+    getUserCurrentLocation();
     getorder('');
     getDriverProfile();
   }
@@ -596,7 +600,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => notificationScr()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen()));
                       },
                         child: Icon(Icons.notifications, color: colors.secondary, size: 30)),
                 ),
@@ -784,7 +788,10 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  getorders?.error == true ? Text("Not Found", style: TextStyle(fontSize: 20, color: colors.primary),) :
+                  getorders?.error == true ? const Padding(
+                    padding: EdgeInsets.only(top: 100),
+                    child: Center(child: Text("Not Found", style: TextStyle(fontSize: 20, color: colors.primary),)),
+                  ) :
                       getorders?.data?.length== null || getorders?.data?.length == "" ? Center(child: CircularProgressIndicator(color: colors.primary,)):
                   ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
@@ -841,7 +848,7 @@ void listToString() {
               Container(
                 height: 90,
                 width: 80,
-                child: Image.network("https://developmentalphawizz.com/hojayega/uploads/profile_pics/${getorders?.data?[index].productImage}"),
+                child: Image.network("${getorders?.data?[index].productImage}"),
               ),
               Column(
                 children: [
@@ -1122,28 +1129,28 @@ void listToString() {
           );
         }
         else if(selected==1){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Earning()
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => History()
+          //   ),
+          // );
         }
         else if(selected==2){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Incentive()
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => Incentive()
+          //   ),
+          // );
         }
         else if(selected==3){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CodReport()
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => CodReport()
+          //   ),
+          // );
         }
         else if(selected==4){
           Navigator.push(
@@ -1153,12 +1160,12 @@ void listToString() {
             ),
           );
         }else if(selected==5){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => OrderHistory()
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => OrderHistory()
+          //   ),
+          // );
         }else if(selected==6){
           share();
         }
@@ -1173,7 +1180,7 @@ void listToString() {
         else if(selected==8){
           // logout(context);
         }
-        else if(selected==9){
+        else if(selected==10){
           logout(context);
         }
       },
@@ -1215,16 +1222,16 @@ void listToString() {
                 style: ElevatedButton.styleFrom(primary: colors.primary),
                 child: Text("YES"),
                 onPressed: () async {
+                  SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+                  prefs.clear();
                   // setState(() {
                   //   removesession();
                   // });
                   Navigator.pop(context);
                   // SystemNavigator.pop();
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
-                      ));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  );
                 },
               ),
               ElevatedButton(

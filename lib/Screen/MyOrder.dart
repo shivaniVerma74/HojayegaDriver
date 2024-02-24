@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hojayegadriverapp/Helper/api.path.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,11 +23,11 @@ class _MyOrdersState extends State<MyOrders> {
   @override
   void initState() {
     super.initState();
-    myOrder();
+    myOrder('0');
   }
 
   CurrentorderModel? currentData;
-  myOrder() async {
+  myOrder(String status) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? driverId = preferences.getString('driver_id');
     var headers = {
@@ -34,7 +35,7 @@ class _MyOrdersState extends State<MyOrders> {
     };
     var request =
         http.MultipartRequest('POST', Uri.parse(ApiServicves.getMyOrder));
-    request.fields.addAll({'driver_id': driverId.toString(), 'status': '1'});
+    request.fields.addAll({'driver_id': driverId.toString(), 'status':status});
     print("my order pararmeter ${request.fields}");
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
@@ -66,6 +67,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   // Variable to store the selected index
   String? dropdownValue;
+  String? statusValue;
 
   showStatus(String? id) {
     showDialog(
@@ -101,92 +103,68 @@ class _MyOrdersState extends State<MyOrders> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Update Status", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),),
-                            DropdownButton<String>(
-                              hint: const Text("Select Status", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15)),
-                              value: dropdownValue,
-                              // icon: Padding(
-                              //   padding: const EdgeInsets.only(right: 20),
-                              //   child: const Icon(Icons.arrow_downward),
-                              // ),
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.black),
-                              underline: Container(
-                                height: 1,
-                                width: 50,
-                                color: Colors.deepPurpleAccent,
-                              ),
-                              onChanged: (String? value) {
-                                // This is called when the user selects an item.
-                                setState(() {
-                                  dropdownValue = value!;
-                                  print("Statusuyys $dropdownValue");
-                                });
-                                // if(value == "Accept"){
-                                //   myOrderController.mackDecisionApi(
-                                //       orderID: oID, status: "1", reson: "n/a");
-                                // }
-                                // else if(value == "Unable to Delivered"){
-                                //   myOrderController.mackDecisionApi(
-                                //       orderID: oID, status: "8", reson: "n/a");
-                                // }
-                                // else if(value == "Door Locked"){
-                                //   myOrderController.mackDecisionApi(
-                                //       orderID: oID, status: "9", reson: "n/a");
-                                // }
-                                // else if(value == "Attempt Again") {
-                                //   myOrderController.mackDecisionApi(
-                                //       orderID: oID, status: "10", reson: "n/a");
-                                // }
-                                // else{
-                                // }
-                              },
-                              items: statusOptions.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value, style: const TextStyle(fontSize: 13, color: colors.black),),
+                            const Text("Update Status", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                            Container(
+                              width: 200,
+                              height: 50,
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                              child:
+
+                              StatefulBuilder(builder: (context, setState) {
+                                return    DropdownButton<String>(
+                                  hint: const Text("Select Status", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15)),
+                                  value: dropdownValue,
+                                  // icon: Padding(
+                                  //   padding: const EdgeInsets.only(right: 20),
+                                  //   child: const Icon(Icons.arrow_downward),
+                                  // ),
+                                  elevation: 16,
+                                  style: const TextStyle(color: Colors.black),
+                                  onChanged: (String? value) {
+                                    dropdownValue = value.toString();
+                                    // This is called when the user selects an item.
+                                    setState(() {
+                                      if(value == "driver_cancel"){
+                                        statusValue = "4";
+                                        print("Statusuyys $statusValue");
+                                      }
+                                      else if(value == "pikcup"){
+                                        statusValue = "5";
+                                        print("Statusuyys $statusValue");
+                                      }
+                                      else if(value == "delivered"){
+                                        statusValue = "6";
+                                        print("Statusuyys $statusValue");
+                                      }
+                                    });
+                                  },
+                                  items: statusOptions.map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value, style: const TextStyle(fontSize: 13, color: colors.black),),
+                                    );
+                                  }).toList(),
                                 );
-                              }).toList(),
+                              },)
                             ),
                           ],
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        // Row(
-                        //   crossAxisAlignment: CrossAxisAlignment.end,
-                        //   children: [
-                        //     const Text("Reason:"),
-                        //     const SizedBox(
-                        //       width: 16,
-                        //     ),
-                        //     Expanded(child: TextFormField())
-                        //   ],
-                        // ),
-                        // const SizedBox(
-                        //   height: 10,
-                        // ),
-                        // Row(
-                        //   crossAxisAlignment: CrossAxisAlignment.end,
-                        //   children: [
-                        //     const Text("1. Drop Client Paying:"),
-                        //     const SizedBox(
-                        //       width: 16,
-                        //     ),
-                        //     Expanded(child: TextFormField())
-                        //   ],
-                        // ),
                       ],
                     ),
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        statusUpdate(id.toString(), dropdownValue.toString());
+                        statusUpdate(id.toString(), statusValue.toString());
+                        Navigator.pop(context);
                       },
                       child: const Text(
                         "Submit",
                         // style: TextStyle(color: Colors.white),
-                      ))
+                      ),
+                  ),
                 ],
               ),
             ),
@@ -202,66 +180,66 @@ class _MyOrdersState extends State<MyOrders> {
             shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             content: SizedBox(
-              height: 200,
+              height: 170,
               width: 300,
               child: Column(
                 children: [
                   Container(
-                    height: 150,
+                    height: 180,
                     width: 250,
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: const Color(0xFF112c48), width: 2),
-                        borderRadius: BorderRadius.circular(16)),
+                    // padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    // decoration: BoxDecoration(
+                    //     border: Border.all(color: const Color(0xFF112c48), width: 2),
+                    //     borderRadius: BorderRadius.circular(16),
+                    // ),
                     child: Column(
                       children: [
-                        const SizedBox(height: 20,),
-                        const Text(
-                          "Region",
-                          style: TextStyle(
-                              color: Color(0xFF112c48),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
+                       const SizedBox(height: 20),
+                       Container(
+                         child: TextField(
+                           controller: cancelCtr,
+                           textAlign: TextAlign.center,
+                           decoration: InputDecoration(
+                             border: OutlineInputBorder(
+                               borderRadius: BorderRadius.circular(10),
+                             ),
+                             filled: true,
+                             fillColor: Colors.white,
+                             hintText: 'Enter Cancel Reason',
+                             contentPadding: const EdgeInsets.all(20),
+                           ),
+                         ),
+                       ),
                         const SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Text("Reason:"),
-                            const SizedBox(
-                              width: 16,
+                        ElevatedButton(
+                            onPressed: () {
+                              if(cancelCtr.text== "" ||  cancelCtr.text == null){
+                                Fluttertoast.showToast(msg: "Pls Enter The Cancel Value");
+                              } else{
+                                cancelOrder(id.toString());
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Text(
+                              "Submit",
+                              // style: TextStyle(color: Colors.white),
                             ),
-                            Expanded(child: TextFormField())
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const Text("1. Drop Client Paying:"),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                            Expanded(child: TextFormField())
-                          ],
-                        ),
+                         ),
+                        // Row(
+                        //   crossAxisAlignment: CrossAxisAlignment.end,
+                        //   children: [
+                        //     const Text("1. Drop Client Paying:"),
+                        //     const SizedBox(
+                        //       width: 16,
+                        //     ),
+                        //     Expanded(child: TextFormField())
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        cancelOrder(id.toString());
-                      },
-                      child: const Text(
-                        "Submit",
-                        // style: TextStyle(color: Colors.white),
-                      ))
                 ],
               ),
             ),
@@ -275,8 +253,7 @@ class _MyOrdersState extends State<MyOrders> {
     var headers = {
       'Cookie': 'ci_session=a1211d3cd64fdbe2071846b6a5941d3e69836b7a'
     };
-    var request =
-        http.MultipartRequest('POST', Uri.parse(ApiServicves.statusUpdate));
+    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.statusUpdate));
     request.fields.addAll({
       'id': id.toString(),
       'status': status.toString(),
@@ -288,11 +265,14 @@ class _MyOrdersState extends State<MyOrders> {
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
       print(await response.stream.bytesToString());
+      Fluttertoast.showToast(msg: "Booking completed success");
+      myOrder("");
     } else {
       print(response.reasonPhrase);
     }
   }
 
+  TextEditingController cancelCtr = TextEditingController();
   cancelOrder(String? id,) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? driverId = preferences.getString('driver_id');
@@ -303,1120 +283,1756 @@ class _MyOrdersState extends State<MyOrders> {
     http.MultipartRequest('POST', Uri.parse(ApiServicves.statusUpdate));
     request.fields.addAll({
       'id': id.toString(),
-      'status': '',
-      'reason': 'testadfasdfsad',
+      'status': '7',
+      'reason': cancelCtr.text,
       'driver_id': driverId.toString(),
     });
-    print("status isssss ========${request.fields}===========");
+    print("cancel status isssss ========${request.fields}===========");
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
       print(await response.stream.bytesToString());
+      Fluttertoast.showToast(msg: "Booking delete success");
+      myOrder("");
+      cancelCtr.clear();
     } else {
       print(response.reasonPhrase);
     }
   }
+  int selected = 0;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding:
-            const EdgeInsets.only(bottom: 96, top: 20, left: 20, right: 20),
+        padding: const EdgeInsets.only(bottom: 96, top: 20, left: 20, right: 20),
         child: Column(
           children: [
-            Row(
-              children: [
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: colors.primary,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child: const Center(
-                      child: Text(
-                    "Current Orders",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: colors.primary,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child: const Center(
-                      child: Text(
-                    "Completed Orders",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: colors.primary,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child: const Center(
-                      child: Text(
-                    "Order History",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
-                )
-              ],
-            ),
-            const SizedBox(height: 20),
-            currentData?.orders?.length == null ||
-                    currentData?.orders?.length == ""
-                ? CircularProgressIndicator(
-                    color: colors.primary,
-                  )
-                : Container(
-                    height: MediaQuery.of(context).size.height,
-                    child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        // shrinkWrap: true,
-                        itemCount: currentData?.orders?.length,
-                        itemBuilder: (context, i) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 5, bottom: 10),
-                            child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 2,
-                                          offset: Offset(0, 1)),
-                                    ]),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Single Pickup",
-                                            style: TextStyle(
-                                                color: colors.primary,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                            "Date - ${currentData?.orders?[i].date}",
-                                            style: TextStyle(
-                                                color: colors.primary,
-                                                fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          height: 230,
-                                          width: 100,
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 90,
-                                                width: 100,
-                                                child: Image.network(
-                                                    "https://developmentalphawizz.com/hojayega/uploads/profile_pics/${currentData?.orders?[i].orderItems?.first.productImage}"),
-                                              ),
-                                              //  Row(
-                                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              //   children: const [
-                                              //     Text("Weight:",style: TextStyle(
-                                              //       color:  colors.primary,
-                                              //       fontWeight: FontWeight.bold,
-                                              //       fontSize: 12,
-                                              //     ),
-                                              //     ),
-                                              //     Text("3kg",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold))
-                                              //   ],
-                                              // ),
-                                              const SizedBox(height: 10),
-                                              // Row(
-                                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              //   children:  [
-                                              //     Text("Distance:",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold)),
-                                              //     Text("${currentData?.orders?[i].orderItems[i].}KM",style: TextStyle(color: colors.primary, fontSize: 12,fontWeight: FontWeight.bold))
-                                              //   ],
-                                              // ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("Amount:",
-                                                      style: TextStyle(
-                                                          color: colors.primary,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  Text(
-                                                      "Rs.${currentData?.orders?[i].total}",
-                                                      style: TextStyle(
-                                                          color: colors.primary,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold))
-                                                ],
-                                              ),
-                                              const SizedBox(height: 20),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("Payment:",
-                                                      style: TextStyle(
-                                                          color: colors.primary,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  Text(
-                                                      "${currentData?.orders?[i].paymentMode}",
-                                                      style: TextStyle(
-                                                          color: colors.primary,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold))
-                                                ],
-                                              ),
-                                              const SizedBox(height: 10),
-                                              Center(
-                                                child: Column(
-                                                  children: const [
-                                                    Text(
-                                                      "Bill",
-                                                      style: TextStyle(
-                                                        color: colors.primary,
-                                                      ),
-                                                    ),
-                                                    Icon(
-                                                      Icons.receipt,
-                                                      color: colors.primary,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const VerticalDivider(
-                                          color: colors.primary,
-                                          width: 2,
-                                          thickness: 2,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text("Clothes",
-                                                  style: TextStyle(
-                                                      color: colors.primary,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              const Text("Note...",
-                                                  style: TextStyle(
-                                                      color: colors.primary,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Column(
-                                                    children: const [
-                                                      SizedBox(
-                                                        height: 16,
-                                                      ),
-                                                      DotWidget(),
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      const SizedBox(
-                                                        height: 12,
-                                                      ),
-                                                      Indicator(
-                                                          lineWidth: 16,
-                                                          lineHeight: 2,
-                                                          endWidget: Container(
-                                                            height: 16,
-                                                            width: 16,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    color: Colors
-                                                                        .green,
-                                                                    shape: BoxShape
-                                                                        .circle),
-                                                          )),
-                                                      const SizedBox(
-                                                        height: 64,
-                                                      ),
-                                                      Indicator(
-                                                          lineWidth: 16,
-                                                          lineHeight: 2,
-                                                          endWidget: Container(
-                                                            height: 16,
-                                                            width: 16,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    color: Colors
-                                                                        .red,
-                                                                    shape: BoxShape
-                                                                        .circle),
-                                                          )),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Container(
-                                                        width: 90,
-                                                        child: Text(
-                                                          '${currentData?.orders?[i].pickAddress}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 68,
-                                                      ),
-                                                      Container(
-                                                        width: 90,
-                                                        child: Text(
-                                                          '${currentData?.orders?[i].address}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ),
-                                                      // Row(
-                                                      //   children:  [
-                                                      //     const Icon(Icons.phone, color: Colors.red,size: 16,),
-                                                      //     Text("${currentData?.orders?[i].pickupName}", style: TextStyle(color: Colors.red),),
-                                                      //   ],
-                                                      // ),
-                                                      // const SizedBox(height: 12),
-                                                      //  Container(
-                                                      //    width: 90,
-                                                      //    child: Text(
-                                                      //     '${currentData?.orders?[i].dropHistory?[i].dropLocation}', overflow: TextOverflow.ellipsis,
-                                                      //     style: const TextStyle(fontWeight: FontWeight.bold)),
-                                                      //  ),
-                                                      // Row(
-                                                      //   children: [
-                                                      //     const Icon(Icons.phone, color: Colors.red,size: 16,),
-                                                      //     Text("${currentData?.orders?[i].dropHistory?[i].dropNumber}", style: TextStyle(color: Colors.red),),
-                                                      //   ],
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(width: 16),
-                                                  Column(
-                                                    children: [
-                                                      const SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      InkWell(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            PickUp()));
-                                                          },
-                                                          child: const Icon(
-                                                              Icons
-                                                                  .pin_drop_outlined,
-                                                              color:
-                                                                  Colors.red)),
-                                                      const SizedBox(
-                                                        height: 48,
-                                                      ),
-                                                      InkWell(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            Droup()));
-                                                          },
-                                                          child: const Icon(
-                                                              Icons
-                                                                  .pin_drop_outlined,
-                                                              color:
-                                                                  Colors.red)),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const Text("Pick up time",
-                                                          style: TextStyle(
-                                                              color: colors
-                                                                  .primary,
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      Text(
-                                                          "${currentData?.orders?[i].time}",
-                                                          style: const TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(width: 9),
-                                                  // Column(
-                                                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                                                  //   children: [
-                                                  //     const Text("Drop time",style: TextStyle(color: colors.primary,fontSize: 14,fontWeight: FontWeight.bold)),
-                                                  //     Text("${currentData?.orders?[i].toTime}",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
-                                                  //   ],
-                                                  // ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      showStatus(currentData?.orders?[i].orderId);
-                                                    },
-                                                    child: Container(
-                                                        height: 40,
-                                                        width: 80,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.green,
-                                                            borderRadius: BorderRadius.circular(8)),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            "Done",
-                                                            style: TextStyle(color: Colors.white),
-                                                          ),
-                                                        ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      print("neweeeeeee");
-                                                      canceldialog(currentData?.orders?[i].orderId);
-                                                    },
-                                                    child: Container(
-                                                        height: 40,
-                                                        width: 80,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.red,
-                                                            borderRadius:
-                                                                BorderRadius.circular(8)),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            "Cancel",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                        )),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                                // Row(
-                                //   crossAxisAlignment: CrossAxisAlignment.start,
-                                //   children: [
-                                //     Expanded(
-                                //       flex: 1,
-                                //       child: Column(
-                                //         crossAxisAlignment: CrossAxisAlignment.start,
-                                //         children: [
-                                //           const Text("Single Pick Up",style: TextStyle(color: colors.primary,fontWeight: FontWeight.bold)),
-                                //           Container(
-                                //             height: 100,
-                                //             width: 100,
-                                //             decoration: BoxDecoration(
-                                //                 borderRadius: BorderRadius.circular(8),
-                                //                 image: const DecorationImage(scale:0.5,image: AssetImage("assets/profile.png",))
-                                //             ),
-                                //           ),
-                                //            Row(
-                                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //             children: const [
-                                //               Text("Weight:",style: TextStyle(
-                                //                 color:  colors.primary,
-                                //                 fontWeight: FontWeight.bold,
-                                //                 fontSize: 12,
-                                //               ),
-                                //               ),
-                                //               Text("3kg",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold))
-                                //             ],
-                                //           ),
-                                //           const SizedBox(height: 10,),
-                                //            Row(
-                                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //             children: const [
-                                //               Text("Distance:",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold)),
-                                //               Text("1.38KM",style: TextStyle(color: colors.primary, fontSize: 12,fontWeight: FontWeight.bold))
-                                //             ],
-                                //           ),
-                                //           const SizedBox(height: 10,),
-                                //            Row(
-                                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //             children: [
-                                //               Text("Amount:",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold)),
-                                //               Text("Rs. 180",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold))
-                                //             ],
-                                //           ),
-                                //           const SizedBox(height: 10,),
-                                //            Row(
-                                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //             children: const [
-                                //               Text("Payment:",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold)),
-                                //               Text("COD",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold))
-                                //             ],
-                                //           ),
-                                //            SizedBox(height: 10,),
-                                //             Center(child: Column(
-                                //             children: [
-                                //               Text("Bill",style: TextStyle(color:  Color(0xFF112c48),),),
-                                //               Icon(Icons.receipt,color:  Color(0xFF112c48),),
-                                //             ],
-                                //           ))
-                                //
-                                //         ],
-                                //       ),
-                                //     ),
-                                //     const VerticalDivider(
-                                //       color:  Color(0xFF112c48),
-                                //       width: 2,
-                                //       thickness: 2,
-                                //     ),
-                                //     Expanded(
-                                //       flex: 2,
-                                //       child: Padding(
-                                //         padding: const EdgeInsets.only(left: 8),
-                                //         child: Column(
-                                //           crossAxisAlignment: CrossAxisAlignment.start,
-                                //           children: [
-                                //              Row(
-                                //               mainAxisAlignment: MainAxisAlignment.end,
-                                //               children: const [
-                                //                 Text("Date - 12/09/2023",style: TextStyle(color: Color(0xFF112c48),fontWeight: FontWeight.bold)),
-                                //               ],
-                                //             ),
-                                //             const Text("Clothes",style: TextStyle(color: Color(0xFF112c48),fontSize: 20,fontWeight: FontWeight.bold)),
-                                //             const Text("Note.....",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
-                                //             Row(
-                                //               crossAxisAlignment: CrossAxisAlignment.start,
-                                //               children: [
-                                //                   Column(
-                                //                   children: const [
-                                //                     SizedBox(
-                                //                       height: 16,
-                                //                     ),
-                                //                     DotWidget(),
-                                //                   ],
-                                //                 ),
-                                //                 Column(
-                                //                   children: [
-                                //                     const SizedBox(
-                                //                       height: 12,
-                                //                     ),
-                                //                     Indicator(
-                                //                         lineWidth: 16,
-                                //                         lineHeight: 2,
-                                //                         endWidget: Container(
-                                //                           height: 16,
-                                //                           width: 16,
-                                //                           decoration: const BoxDecoration(
-                                //                               color: Colors.green,
-                                //                               shape: BoxShape.circle
-                                //                           ),
-                                //                         )),
-                                //                     const SizedBox(height: 64,),
-                                //                     Indicator(
-                                //                         lineWidth: 16,
-                                //                         lineHeight: 2,
-                                //                         endWidget:  Container(
-                                //                           height: 16,
-                                //                           width: 16,
-                                //                           decoration:const BoxDecoration(
-                                //                               color: Colors.red,
-                                //                               shape: BoxShape.circle
-                                //                           ),
-                                //                         )),
-                                //                   ],
-                                //                 ),
-                                //                  SizedBox(width: 4,),
-                                //                   Column(
-                                //                   crossAxisAlignment: CrossAxisAlignment.start ,
-                                //                   children: [
-                                //                     const Text(
-                                //                       '372 Mclean Rd,\nMilner, GA, 30257',
-                                //                       style: TextStyle(
-                                //                           fontWeight: FontWeight.bold
-                                //                       ),
-                                //
-                                //                     ),
-                                //                     Row(
-                                //                       children: const [
-                                //                         Icon(Icons.phone, color: Colors.red,size: 16,),
-                                //                         Text("8760969005", style: TextStyle(color: Colors.red),),
-                                //                       ],
-                                //                     ),
-                                //                     SizedBox(height: 12,),
-                                //                     const Text(
-                                //                       '2580 Hebb Rd,\nWilsonville, AL,',
-                                //                       style: TextStyle(
-                                //                           fontWeight: FontWeight.bold
-                                //                       ),
-                                //                     ),
-                                //                     Row(
-                                //                       children: const [
-                                //                         Icon(Icons.phone, color: Colors.red,size: 16,),
-                                //                         Text("8760969005", style: TextStyle(color: Colors.red),),
-                                //                       ],
-                                //                     ),
-                                //                   ],
-                                //                 ),
-                                //                 const SizedBox(width: 16,),
-                                //                  Column(
-                                //                   children: const [
-                                //                     SizedBox(
-                                //                       height: 8,
-                                //                     ),
-                                //                     Icon(Icons.pin_drop_outlined,color: Colors.red,),
-                                //                     SizedBox(
-                                //                       height: 48,
-                                //                     ),
-                                //                     Icon(Icons.pin_drop_outlined,color: Colors.red,),
-                                //                   ],
-                                //                 ),
-                                //               ],
-                                //             ),
-                                //              Row(
-                                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //               children: [
-                                //                 Column(
-                                //                   crossAxisAlignment: CrossAxisAlignment.start,
-                                //                   children: const [
-                                //                     Text("Pick up time",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
-                                //                     Text("12: 30 PM",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
-                                //                   ],
-                                //                 ),
-                                //                 Column(
-                                //                   crossAxisAlignment: CrossAxisAlignment.start,
-                                //                   children: const [
-                                //                     Text("Drop time",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
-                                //                     Text("01: 30 PM",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
-                                //                   ],
-                                //                 ),
-                                //               ],
-                                //             ),
-                                //             const SizedBox(
-                                //
-                                //             ),
-                                //             Row(
-                                //               mainAxisAlignment: MainAxisAlignment.end,
-                                //               children: [
-                                //                 Container(
-                                //                     height: 40,
-                                //                     width: 80,
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.red,
-                                //                         borderRadius: BorderRadius.circular(8)
-                                //                     ),
-                                //                     child: const Center(child: Text("Cancel",style: TextStyle(color: Colors.white),),)
-                                //                 ),
-                                //               ],
-                                //             ),
-                                //           ],
-                                //         ),
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                ),
-                          );
-                        }),
-                  ),
-            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 2,
-                        offset: Offset(0, 1)),
-                  ]),
+              height: 40,
+              width: MediaQuery.of(context).size.width,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    flex: 1,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Multiple Pick Up",
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selected = 0;
+                        });
+                        myOrder("0");
+                      },
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: selected == 0
+                                ? colors.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: colors.primary)),
+                        child: Center(
+                          child: Text(
+                            'Current Orders',
                             style: TextStyle(
-                                color: colors.primary,
-                                fontWeight: FontWeight.bold)),
-                        // Container(
-                        //   height: 100,
-                        //   width: 100,
-                        //   decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(8),
-                        //       image: const DecorationImage(
-                        //           scale:0.5,
-                        //           image: AssetImage("assets/profile.png",))
-                        //   ),
-                        // ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text("Weight:",
-                                style: TextStyle(
-                                  color: colors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                )),
-                            Text("3kg",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold))
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text("Distance:",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold)),
-                            Text("1.38KM",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold))
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text("Amount:",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold)),
-                            Text("Rs. 180",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold))
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text("Payment:",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold)),
-                            Text("COD",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold))
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Center(
-                          child: Column(
-                            children: const [
-                              Text(
-                                "Bill",
-                                style: TextStyle(
-                                  color: colors.primary,
-                                ),
-                              ),
-                              Icon(
-                                Icons.receipt,
-                                color: colors.primary,
-                              ),
-                            ],
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: selected == 0
+                                    ? Colors.white
+                                    : colors.primary),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  const VerticalDivider(
-                    color: colors.primary,
-                    width: 2,
-                    thickness: 2,
+                  const SizedBox(
+                    width: 10,
                   ),
                   Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: const [
-                            Text("Date - 12/09/2023",
-                                style: TextStyle(
-                                    color: colors.primary,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        const Text("Clothes",
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          selected = 1;
+                        });
+                        myOrder("6");
+                      },
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: selected == 1
+                                ? colors.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: colors.primary)),
+                        child: Center(
+                          child: Text(
+                            'Completed Orders',
                             style: TextStyle(
-                                color: colors.primary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold)),
-                        const Text("Note.....",
-                            style: TextStyle(
-                                color: colors.primary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold)),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              children: [
-                                const Text("Pick Up",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold)),
-                                Container(
-                                  height: 24,
-                                  width: 24,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border:
-                                          Border.all(color: colors.primary)),
-                                  child: const Center(
-                                      child: Text("A",
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold))),
-                                ),
-                                const DotWidget(),
-                                const Text("Drop",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold)),
-                                Container(
-                                  height: 24,
-                                  width: 24,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border:
-                                          Border.all(color: colors.primary)),
-                                  child: const Center(
-                                      child: Text("B",
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold))),
-                                ),
-                                const DotWidget(),
-                                const Text("Drop",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold)),
-                                Container(
-                                  height: 24,
-                                  width: 24,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border:
-                                          Border.all(color: colors.primary)),
-                                  child: const Center(
-                                      child: Text("C",
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold))),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // SizedBox(height: 12,),
-                                Row(
-                                  children: const [
-                                    Text(
-                                      '372 Mclean Rd,\nMilner, GA, 30257',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      Icons.pin_drop_outlined,
-                                      color: Colors.red,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: const [
-                                    Icon(
-                                      Icons.phone,
-                                      color: Colors.red,
-                                      size: 16,
-                                    ),
-                                    Text(
-                                      "8760969005",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text(
-                                      "12:30 PM",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 64,
-                                ),
-                                Row(
-                                  children: const [
-                                    Text(
-                                      '372 Mclean Rd,\nMilner, GA, 30257',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      Icons.pin_drop_outlined,
-                                      color: Colors.red,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: const [
-                                    Icon(
-                                      Icons.phone,
-                                      color: Colors.red,
-                                      size: 16,
-                                    ),
-                                    Text(
-                                      "8760969005",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text(
-                                      "01:30 PM",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 64,
-                                ),
-                                Row(
-                                  children: const [
-                                    Text(
-                                      '372 Mclean Rd,\nMilner, GA, 30257',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      Icons.pin_drop_outlined,
-                                      color: Colors.red,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: const [
-                                    Icon(
-                                      Icons.phone,
-                                      color: Colors.red,
-                                      size: 16,
-                                    ),
-                                    Text(
-                                      "8760969005",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text(
-                                      "02:30 PM",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: selected == 1
+                                    ? Colors.white
+                                    : colors.primary),
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                // showStatus();
-                              },
-                              child: Container(
-                                  height: 40,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: const Center(
-                                    child: Text(
-                                      "Done",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () {
-                                // showStatus();
-                                print("neweeeeeee");
-                                // showAlertDialog(context);
-                              },
-                              child: Container(
-                                  height: 40,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: const Center(
-                                    child: Text(
-                                      "Cancel",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 10,),
+            selected == 0 ? getCurrentOrder() : getCompleteOrders(""),
+            const SizedBox(height: 20),
+            // Container(
+            //   padding: const EdgeInsets.all(8),
+            //   decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       borderRadius: BorderRadius.circular(8),
+            //       boxShadow: const [
+            //         BoxShadow(
+            //             color: Colors.grey,
+            //             blurRadius: 2,
+            //             offset: Offset(0, 1)),
+            //       ]),
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Expanded(
+            //         flex: 1,
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             const Text("Multiple Pick Up",
+            //                 style: TextStyle(
+            //                     color: colors.primary,
+            //                     fontWeight: FontWeight.bold)),
+            //             // Container(
+            //             //   height: 100,
+            //             //   width: 100,
+            //             //   decoration: BoxDecoration(
+            //             //       borderRadius: BorderRadius.circular(8),
+            //             //       image: const DecorationImage(
+            //             //           scale:0.5,
+            //             //           image: AssetImage("assets/profile.png",))
+            //             //   ),
+            //             // ),
+            //             Row(
+            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //               children: const [
+            //                 Text("Weight:",
+            //                     style: TextStyle(
+            //                       color: colors.primary,
+            //                       fontWeight: FontWeight.bold,
+            //                       fontSize: 12,
+            //                     )),
+            //                 Text("3kg",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold))
+            //               ],
+            //             ),
+            //             const SizedBox(
+            //               height: 10,
+            //             ),
+            //             Row(
+            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //               children: const [
+            //                 Text("Distance:",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold)),
+            //                 Text("1.38KM",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold))
+            //               ],
+            //             ),
+            //             const SizedBox(
+            //               height: 10,
+            //             ),
+            //             Row(
+            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //               children: const [
+            //                 Text("Amount:",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold)),
+            //                 Text("Rs. 180",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold))
+            //               ],
+            //             ),
+            //             const SizedBox(
+            //               height: 10,
+            //             ),
+            //             Row(
+            //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //               children: const [
+            //                 Text("Payment:",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold)),
+            //                 Text("COD",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold))
+            //               ],
+            //             ),
+            //             SizedBox(
+            //               height: 10,
+            //             ),
+            //             Center(
+            //               child: Column(
+            //                 children: const [
+            //                   Text(
+            //                     "Bill",
+            //                     style: TextStyle(
+            //                       color: colors.primary,
+            //                     ),
+            //                   ),
+            //                   Icon(
+            //                     Icons.receipt,
+            //                     color: colors.primary,
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //       const VerticalDivider(
+            //         color: colors.primary,
+            //         width: 2,
+            //         thickness: 2,
+            //       ),
+            //       Expanded(
+            //         flex: 2,
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Row(
+            //               mainAxisAlignment: MainAxisAlignment.end,
+            //               children: const [
+            //                 Text("Date - 12/09/2023",
+            //                     style: TextStyle(
+            //                         color: colors.primary,
+            //                         fontWeight: FontWeight.bold)),
+            //               ],
+            //             ),
+            //             const Text("Clothes",
+            //                 style: TextStyle(
+            //                     color: colors.primary,
+            //                     fontSize: 20,
+            //                     fontWeight: FontWeight.bold)),
+            //             const Text("Note.....",
+            //                 style: TextStyle(
+            //                     color: colors.primary,
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold)),
+            //             Row(
+            //               crossAxisAlignment: CrossAxisAlignment.start,
+            //               children: [
+            //                 Column(
+            //                   children: [
+            //                     const Text("Pick Up",
+            //                         style: TextStyle(
+            //                             color: Colors.red,
+            //                             fontSize: 10,
+            //                             fontWeight: FontWeight.bold)),
+            //                     Container(
+            //                       height: 24,
+            //                       width: 24,
+            //                       decoration: BoxDecoration(
+            //                           shape: BoxShape.circle,
+            //                           border:
+            //                               Border.all(color: colors.primary)),
+            //                       child: const Center(
+            //                           child: Text("A",
+            //                               style: TextStyle(
+            //                                   color: Colors.red,
+            //                                   fontSize: 14,
+            //                                   fontWeight: FontWeight.bold))),
+            //                     ),
+            //                     const DotWidget(),
+            //                     const Text("Drop",
+            //                         style: TextStyle(
+            //                             color: Colors.red,
+            //                             fontSize: 10,
+            //                             fontWeight: FontWeight.bold)),
+            //                     Container(
+            //                       height: 24,
+            //                       width: 24,
+            //                       decoration: BoxDecoration(
+            //                           shape: BoxShape.circle,
+            //                           border:
+            //                               Border.all(color: colors.primary)),
+            //                       child: const Center(
+            //                           child: Text("B",
+            //                               style: TextStyle(
+            //                                   color: Colors.red,
+            //                                   fontSize: 14,
+            //                                   fontWeight: FontWeight.bold))),
+            //                     ),
+            //                     const DotWidget(),
+            //                     const Text("Drop",
+            //                         style: TextStyle(
+            //                             color: Colors.red,
+            //                             fontSize: 10,
+            //                             fontWeight: FontWeight.bold)),
+            //                     Container(
+            //                       height: 24,
+            //                       width: 24,
+            //                       decoration: BoxDecoration(
+            //                           shape: BoxShape.circle,
+            //                           border:
+            //                               Border.all(color: colors.primary)),
+            //                       child: const Center(
+            //                           child: Text("C",
+            //                               style: TextStyle(
+            //                                   color: Colors.red,
+            //                                   fontSize: 14,
+            //                                   fontWeight: FontWeight.bold))),
+            //                     ),
+            //                   ],
+            //                 ),
+            //                 SizedBox(
+            //                   width: 8,
+            //                 ),
+            //                 Column(
+            //                   crossAxisAlignment: CrossAxisAlignment.start,
+            //                   children: [
+            //                     // SizedBox(height: 12,),
+            //                     Row(
+            //                       children: const [
+            //                         Text(
+            //                           '372 Mclean Rd,\nMilner, GA, 30257',
+            //                           style: TextStyle(
+            //                               fontWeight: FontWeight.bold),
+            //                         ),
+            //                         SizedBox(
+            //                           width: 20,
+            //                         ),
+            //                         Icon(
+            //                           Icons.pin_drop_outlined,
+            //                           color: Colors.red,
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     Row(
+            //                       children: const [
+            //                         Icon(
+            //                           Icons.phone,
+            //                           color: Colors.red,
+            //                           size: 16,
+            //                         ),
+            //                         Text(
+            //                           "8760969005",
+            //                           style: TextStyle(
+            //                               fontSize: 12, color: Colors.red),
+            //                         ),
+            //                         SizedBox(
+            //                           width: 16,
+            //                         ),
+            //                         Text(
+            //                           "12:30 PM",
+            //                           style: TextStyle(
+            //                               fontSize: 12, color: Colors.red),
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     const SizedBox(
+            //                       height: 64,
+            //                     ),
+            //                     Row(
+            //                       children: const [
+            //                         Text(
+            //                           '372 Mclean Rd,\nMilner, GA, 30257',
+            //                           style: TextStyle(
+            //                               fontWeight: FontWeight.bold),
+            //                         ),
+            //                         SizedBox(
+            //                           width: 20,
+            //                         ),
+            //                         Icon(
+            //                           Icons.pin_drop_outlined,
+            //                           color: Colors.red,
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     Row(
+            //                       children: const [
+            //                         Icon(
+            //                           Icons.phone,
+            //                           color: Colors.red,
+            //                           size: 16,
+            //                         ),
+            //                         Text(
+            //                           "8760969005",
+            //                           style: TextStyle(
+            //                               fontSize: 12, color: Colors.red),
+            //                         ),
+            //                         SizedBox(
+            //                           width: 16,
+            //                         ),
+            //                         Text(
+            //                           "01:30 PM",
+            //                           style: TextStyle(
+            //                               fontSize: 12, color: Colors.red),
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     SizedBox(
+            //                       height: 64,
+            //                     ),
+            //                     Row(
+            //                       children: const [
+            //                         Text(
+            //                           '372 Mclean Rd,\nMilner, GA, 30257',
+            //                           style: TextStyle(
+            //                               fontWeight: FontWeight.bold),
+            //                         ),
+            //                         SizedBox(
+            //                           width: 20,
+            //                         ),
+            //                         Icon(
+            //                           Icons.pin_drop_outlined,
+            //                           color: Colors.red,
+            //                         ),
+            //                       ],
+            //                     ),
+            //                     Row(
+            //                       children: const [
+            //                         Icon(
+            //                           Icons.phone,
+            //                           color: Colors.red,
+            //                           size: 16,
+            //                         ),
+            //                         Text(
+            //                           "8760969005",
+            //                           style: TextStyle(
+            //                               fontSize: 12, color: Colors.red),
+            //                         ),
+            //                         SizedBox(
+            //                           width: 16,
+            //                         ),
+            //                         Text(
+            //                           "02:30 PM",
+            //                           style: TextStyle(
+            //                               fontSize: 12, color: Colors.red),
+            //                         ),
+            //                       ],
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ],
+            //             ),
+            //             Row(
+            //               mainAxisAlignment: MainAxisAlignment.end,
+            //               children: [
+            //                 InkWell(
+            //                   onTap: () {
+            //                     // showStatus();
+            //                   },
+            //                   child: Container(
+            //                       height: 40,
+            //                       width: 80,
+            //                       decoration: BoxDecoration(
+            //                           color: Colors.green,
+            //                           borderRadius: BorderRadius.circular(8)),
+            //                       child: const Center(
+            //                         child: Text(
+            //                           "Done",
+            //                           style: TextStyle(color: Colors.white),
+            //                         ),
+            //                       ),
+            //                   ),
+            //                 ),
+            //                 const SizedBox(width: 8),
+            //                 InkWell(
+            //                   onTap: () {
+            //                     // showStatus();
+            //                     print("neweeeeeee");
+            //                     // showAlertDialog(context);
+            //                   },
+            //                   child: Container(
+            //                       height: 40,
+            //                       width: 80,
+            //                       decoration: BoxDecoration(
+            //                           color: Colors.red,
+            //                           borderRadius: BorderRadius.circular(8)),
+            //                       child: const Center(
+            //                         child: Text(
+            //                           "Cancel",
+            //                           style: TextStyle(color: Colors.white),
+            //                         ),
+            //                       )),
+            //                 ),
+            //               ],
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
+    );
+  }
+
+  getCurrentOrder() {
+   return currentData?.orders?.length == null || currentData?.orders?.length == ""
+        ? Center(
+     child: Text("Order Not Found", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),),
+   ):
+   Container(
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+          // physics: const AlwaysScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: currentData?.orders?.length,
+          itemBuilder: (context, i) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 10),
+              child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 2,
+                            offset: Offset(0, 1)),
+                      ]),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Single Pickup",
+                              style: TextStyle(
+                                  color: colors.primary,
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                              "Date - ${currentData?.orders?[i].date}",
+                              style: const TextStyle(
+                                  color: colors.primary,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 230,
+                            width: 100,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 90,
+                                  width: 100,
+                                  child: Image.network(
+                                      "${currentData?.orders?[i].orderItems?[0].productImage}"),
+                                ),
+                                //  Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: const [
+                                //     Text("Weight:",style: TextStyle(
+                                //       color:  colors.primary,
+                                //       fontWeight: FontWeight.bold,
+                                //       fontSize: 12,
+                                //     ),
+                                //     ),
+                                //     Text("3kg",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold))
+                                //   ],
+                                // ),
+                                const SizedBox(height: 10),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children:  [
+                                //     Text("Distance:",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold)),
+                                //     Text("${currentData?.orders?[i].orderItems[i].}KM",style: TextStyle(color: colors.primary, fontSize: 12,fontWeight: FontWeight.bold))
+                                //   ],
+                                // ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Amount:",
+                                        style: TextStyle(
+                                            color: colors.primary,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.bold)),
+                                    Text(
+                                        "Rs.${currentData?.orders?[i].total}",
+                                        style: const TextStyle(
+                                            color: colors.primary,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.bold))
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    const Text("Payment:",
+                                        style: TextStyle(
+                                            color: colors.primary,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.bold)),
+                                    Text(
+                                      "${currentData?.orders?[i].paymentMode}",
+                                      style: const TextStyle(
+                                          color: colors.primary,
+                                          fontSize: 12,
+                                          fontWeight:
+                                          FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Center(
+                                  child: Column(
+                                    children: const [
+                                      Text(
+                                        "Bill",
+                                        style: TextStyle(
+                                          color: colors.primary,
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.receipt,
+                                        color: colors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const VerticalDivider(
+                            color: colors.primary,
+                            width: 2,
+                            thickness: 2,
+                          ),
+                          Padding(
+                            padding:
+                            const EdgeInsets.only(left: 8),
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                // const Text("Clothes",
+                                //     style: TextStyle(
+                                //         color: colors.primary,
+                                //         fontSize: 20,
+                                //         fontWeight:
+                                //         FontWeight.bold)),
+                                const Text("Note...",
+                                    style: TextStyle(
+                                        color: colors.primary,
+                                        fontSize: 14,
+                                        fontWeight:
+                                        FontWeight.bold),
+                                ),
+                                Row(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      children: const [
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        DotWidget(),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Indicator(
+                                            lineWidth: 16,
+                                            lineHeight: 2,
+                                            endWidget: Container(
+                                              height: 16,
+                                              width: 16,
+                                              decoration:
+                                              const BoxDecoration(
+                                                  color: Colors
+                                                      .green,
+                                                  shape: BoxShape
+                                                      .circle),
+                                            )),
+                                        const SizedBox(
+                                          height: 64,
+                                        ),
+                                        Indicator(
+                                            lineWidth: 16,
+                                            lineHeight: 2,
+                                            endWidget: Container(
+                                              height: 16,
+                                              width: 16,
+                                              decoration:
+                                              const BoxDecoration(
+                                                  color: Colors
+                                                      .red,
+                                                  shape: BoxShape
+                                                      .circle),
+                                            )),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          width: 90,
+                                          child: Text(
+                                            '${currentData?.orders?[i].pickAddress}',
+                                            overflow: TextOverflow
+                                                .ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 68,
+                                        ),
+                                        Container(
+                                          width: 90,
+                                          child: Text(
+                                            '${currentData?.orders?[i].address}',
+                                            overflow: TextOverflow
+                                                .ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
+                                          ),
+                                        ),
+                                        // Row(
+                                        //   children:  [
+                                        //     const Icon(Icons.phone, color: Colors.red,size: 16,),
+                                        //     Text("${currentData?.orders?[i].pickupName}", style: TextStyle(color: Colors.red),),
+                                        //   ],
+                                        // ),
+                                        // const SizedBox(height: 12),
+                                        //  Container(
+                                        //    width: 90,
+                                        //    child: Text(
+                                        //     '${currentData?.orders?[i].dropHistory?[i].dropLocation}', overflow: TextOverflow.ellipsis,
+                                        //     style: const TextStyle(fontWeight: FontWeight.bold)),
+                                        //  ),
+                                        // Row(
+                                        //   children: [
+                                        //     const Icon(Icons.phone, color: Colors.red,size: 16,),
+                                        //     Text("${currentData?.orders?[i].dropHistory?[i].dropNumber}", style: TextStyle(color: Colors.red),),
+                                        //   ],
+                                        // ),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          PickUp()));
+                                            },
+                                            child: const Icon(
+                                                Icons
+                                                    .pin_drop_outlined,
+                                                color:
+                                                Colors.red)),
+                                        const SizedBox(
+                                          height: 48,
+                                        ),
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          Droup()));
+                                            },
+                                            child: const Icon(
+                                                Icons
+                                                    .pin_drop_outlined,
+                                                color:
+                                                Colors.red)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        const Text("Pick up time",
+                                            style: TextStyle(
+                                                color: colors
+                                                    .primary,
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold)),
+                                        Text(
+                                            "${currentData?.orders?[i].time}",
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold)),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 9),
+                                    // Column(
+                                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                                    //   children: [
+                                    //     const Text("Drop time",style: TextStyle(color: colors.primary,fontSize: 14,fontWeight: FontWeight.bold)),
+                                    //     Text("${currentData?.orders?[i].toTime}",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
+                                    //   ],
+                                    // ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        showStatus(currentData?.orders?[i].orderId);
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        width: 80,
+                                        decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: BorderRadius.circular(8)),
+                                        child: const Center(
+                                          child: Text(
+                                            "Done",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    InkWell(
+                                      onTap: () {
+                                        print("neweeeeeee");
+                                        canceldialog(currentData?.orders?[i].orderId);
+                                      },
+                                      child: Container(
+                                          height: 40,
+                                          width: 80,
+                                          decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                              BorderRadius.circular(8)),
+                                          child: const Center(
+                                            child: Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .white),
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Expanded(
+                //       flex: 1,
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           const Text("Single Pick Up",style: TextStyle(color: colors.primary,fontWeight: FontWeight.bold)),
+                //           Container(
+                //             height: 100,
+                //             width: 100,
+                //             decoration: BoxDecoration(
+                //                 borderRadius: BorderRadius.circular(8),
+                //                 image: const DecorationImage(scale:0.5,image: AssetImage("assets/profile.png",))
+                //             ),
+                //           ),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: const [
+                //               Text("Weight:",style: TextStyle(
+                //                 color:  colors.primary,
+                //                 fontWeight: FontWeight.bold,
+                //                 fontSize: 12,
+                //               ),
+                //               ),
+                //               Text("3kg",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10,),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: const [
+                //               Text("Distance:",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold)),
+                //               Text("1.38KM",style: TextStyle(color: colors.primary, fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10,),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: [
+                //               Text("Amount:",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold)),
+                //               Text("Rs. 180",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10,),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: const [
+                //               Text("Payment:",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold)),
+                //               Text("COD",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //            SizedBox(height: 10,),
+                //             Center(child: Column(
+                //             children: [
+                //               Text("Bill",style: TextStyle(color:  Color(0xFF112c48),),),
+                //               Icon(Icons.receipt,color:  Color(0xFF112c48),),
+                //             ],
+                //           ))
+                //
+                //         ],
+                //       ),
+                //     ),
+                //     const VerticalDivider(
+                //       color:  Color(0xFF112c48),
+                //       width: 2,
+                //       thickness: 2,
+                //     ),
+                //     Expanded(
+                //       flex: 2,
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(left: 8),
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //              Row(
+                //               mainAxisAlignment: MainAxisAlignment.end,
+                //               children: const [
+                //                 Text("Date - 12/09/2023",style: TextStyle(color: Color(0xFF112c48),fontWeight: FontWeight.bold)),
+                //               ],
+                //             ),
+                //             const Text("Clothes",style: TextStyle(color: Color(0xFF112c48),fontSize: 20,fontWeight: FontWeight.bold)),
+                //             const Text("Note.....",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
+                //             Row(
+                //               crossAxisAlignment: CrossAxisAlignment.start,
+                //               children: [
+                //                   Column(
+                //                   children: const [
+                //                     SizedBox(
+                //                       height: 16,
+                //                     ),
+                //                     DotWidget(),
+                //                   ],
+                //                 ),
+                //                 Column(
+                //                   children: [
+                //                     const SizedBox(
+                //                       height: 12,
+                //                     ),
+                //                     Indicator(
+                //                         lineWidth: 16,
+                //                         lineHeight: 2,
+                //                         endWidget: Container(
+                //                           height: 16,
+                //                           width: 16,
+                //                           decoration: const BoxDecoration(
+                //                               color: Colors.green,
+                //                               shape: BoxShape.circle
+                //                           ),
+                //                         )),
+                //                     const SizedBox(height: 64,),
+                //                     Indicator(
+                //                         lineWidth: 16,
+                //                         lineHeight: 2,
+                //                         endWidget:  Container(
+                //                           height: 16,
+                //                           width: 16,
+                //                           decoration:const BoxDecoration(
+                //                               color: Colors.red,
+                //                               shape: BoxShape.circle
+                //                           ),
+                //                         )),
+                //                   ],
+                //                 ),
+                //                  SizedBox(width: 4,),
+                //                   Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start ,
+                //                   children: [
+                //                     const Text(
+                //                       '372 Mclean Rd,\nMilner, GA, 30257',
+                //                       style: TextStyle(
+                //                           fontWeight: FontWeight.bold
+                //                       ),
+                //
+                //                     ),
+                //                     Row(
+                //                       children: const [
+                //                         Icon(Icons.phone, color: Colors.red,size: 16,),
+                //                         Text("8760969005", style: TextStyle(color: Colors.red),),
+                //                       ],
+                //                     ),
+                //                     SizedBox(height: 12,),
+                //                     const Text(
+                //                       '2580 Hebb Rd,\nWilsonville, AL,',
+                //                       style: TextStyle(
+                //                           fontWeight: FontWeight.bold
+                //                       ),
+                //                     ),
+                //                     Row(
+                //                       children: const [
+                //                         Icon(Icons.phone, color: Colors.red,size: 16,),
+                //                         Text("8760969005", style: TextStyle(color: Colors.red),),
+                //                       ],
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 const SizedBox(width: 16,),
+                //                  Column(
+                //                   children: const [
+                //                     SizedBox(
+                //                       height: 8,
+                //                     ),
+                //                     Icon(Icons.pin_drop_outlined,color: Colors.red,),
+                //                     SizedBox(
+                //                       height: 48,
+                //                     ),
+                //                     Icon(Icons.pin_drop_outlined,color: Colors.red,),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //              Row(
+                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //               children: [
+                //                 Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: const [
+                //                     Text("Pick up time",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
+                //                     Text("12: 30 PM",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
+                //                   ],
+                //                 ),
+                //                 Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: const [
+                //                     Text("Drop time",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
+                //                     Text("01: 30 PM",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //             const SizedBox(
+                //
+                //             ),
+                //             Row(
+                //               mainAxisAlignment: MainAxisAlignment.end,
+                //               children: [
+                //                 Container(
+                //                     height: 40,
+                //                     width: 80,
+                //                     decoration: BoxDecoration(
+                //                         color: Colors.red,
+                //                         borderRadius: BorderRadius.circular(8)
+                //                     ),
+                //                     child: const Center(child: Text("Cancel",style: TextStyle(color: Colors.white),),)
+                //                 ),
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ),
+            );
+          }),
+    );
+  }
+
+  getCompleteOrders(index){
+    return currentData?.orders?.length == null || currentData?.orders?.length == ""
+        ? Center(
+      child: Text("Order Not Found", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),),
+    ): Container(
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+          // physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: currentData?.orders?.length,
+          itemBuilder: (context, i) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 10),
+              child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 2,
+                            offset: Offset(0, 1)),
+                      ]),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Single Pickup",
+                              style: TextStyle(
+                                  color: colors.primary,
+                                  fontWeight: FontWeight.bold)),
+                          Text(
+                              "Date - ${currentData?.orders?[i].date}",
+                              style: const TextStyle(
+                                  color: colors.primary,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 230,
+                            width: 100,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 90,
+                                  width: 100,
+                                  child: Image.network(
+                                      "https://developmentalphawizz.com/hojayega/uploads/profile_pics/${currentData?.orders?[i].orderItems?.first.productImage}"),
+                                ),
+                                //  Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: const [
+                                //     Text("Weight:",style: TextStyle(
+                                //       color:  colors.primary,
+                                //       fontWeight: FontWeight.bold,
+                                //       fontSize: 12,
+                                //     ),
+                                //     ),
+                                //     Text("3kg",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold))
+                                //   ],
+                                // ),
+                                const SizedBox(height: 10),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children:  [
+                                //     Text("Distance:",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold)),
+                                //     Text("${currentData?.orders?[i].orderItems[i].}KM",style: TextStyle(color: colors.primary, fontSize: 12,fontWeight: FontWeight.bold))
+                                //   ],
+                                // ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Amount:",
+                                        style: TextStyle(
+                                            color: colors.primary,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.bold)),
+                                    Text(
+                                        "Rs.${currentData?.orders?[i].total}",
+                                        style: const TextStyle(
+                                            color: colors.primary,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.bold))
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    const Text("Payment:",
+                                        style: TextStyle(
+                                            color: colors.primary,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.bold)),
+                                    Text(
+                                      "${currentData?.orders?[i].paymentMode}",
+                                      style: const TextStyle(
+                                          color: colors.primary,
+                                          fontSize: 12,
+                                          fontWeight:
+                                          FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Center(
+                                  child: Column(
+                                    children: const [
+                                      Text(
+                                        "Bill",
+                                        style: TextStyle(
+                                          color: colors.primary,
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.receipt,
+                                        color: colors.primary,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const VerticalDivider(
+                            color: colors.primary,
+                            width: 2,
+                            thickness: 2,
+                          ),
+                          Padding(
+                            padding:
+                            const EdgeInsets.only(left: 8),
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                const Text("Clothes",
+                                    style: TextStyle(
+                                        color: colors.primary,
+                                        fontSize: 20,
+                                        fontWeight:
+                                        FontWeight.bold)),
+                                const Text("Note...",
+                                    style: TextStyle(
+                                        color: colors.primary,
+                                        fontSize: 14,
+                                        fontWeight:
+                                        FontWeight.bold)),
+                                Row(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      children: const [
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        DotWidget(),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Indicator(
+                                            lineWidth: 16,
+                                            lineHeight: 2,
+                                            endWidget: Container(
+                                              height: 16,
+                                              width: 16,
+                                              decoration:
+                                              const BoxDecoration(
+                                                  color: Colors
+                                                      .green,
+                                                  shape: BoxShape
+                                                      .circle),
+                                            )),
+                                        const SizedBox(
+                                          height: 64,
+                                        ),
+                                        Indicator(
+                                            lineWidth: 16,
+                                            lineHeight: 2,
+                                            endWidget: Container(
+                                              height: 16,
+                                              width: 16,
+                                              decoration:
+                                              const BoxDecoration(
+                                                  color: Colors
+                                                      .red,
+                                                  shape: BoxShape
+                                                      .circle),
+                                            )),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Container(
+                                          width: 90,
+                                          child: Text(
+                                            '${currentData?.orders?[i].pickAddress}',
+                                            overflow: TextOverflow
+                                                .ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 68,
+                                        ),
+                                        Container(
+                                          width: 90,
+                                          child: Text(
+                                            '${currentData?.orders?[i].address}',
+                                            overflow: TextOverflow
+                                                .ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold),
+                                          ),
+                                        ),
+                                        // Row(
+                                        //   children:  [
+                                        //     const Icon(Icons.phone, color: Colors.red,size: 16,),
+                                        //     Text("${currentData?.orders?[i].pickupName}", style: TextStyle(color: Colors.red),),
+                                        //   ],
+                                        // ),
+                                        // const SizedBox(height: 12),
+                                        //  Container(
+                                        //    width: 90,
+                                        //    child: Text(
+                                        //     '${currentData?.orders?[i].dropHistory?[i].dropLocation}', overflow: TextOverflow.ellipsis,
+                                        //     style: const TextStyle(fontWeight: FontWeight.bold)),
+                                        //  ),
+                                        // Row(
+                                        //   children: [
+                                        //     const Icon(Icons.phone, color: Colors.red,size: 16,),
+                                        //     Text("${currentData?.orders?[i].dropHistory?[i].dropNumber}", style: TextStyle(color: Colors.red),),
+                                        //   ],
+                                        // ),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          PickUp()));
+                                            },
+                                            child: const Icon(
+                                                Icons
+                                                    .pin_drop_outlined,
+                                                color:
+                                                Colors.red)),
+                                        const SizedBox(
+                                          height: 48,
+                                        ),
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          Droup()));
+                                            },
+                                            child: const Icon(
+                                                Icons
+                                                    .pin_drop_outlined,
+                                                color:
+                                                Colors.red)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        const Text("Pick up time",
+                                            style: TextStyle(
+                                                color: colors
+                                                    .primary,
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold)),
+                                        Text(
+                                            "${currentData?.orders?[i].time}",
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold)),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 9),
+                                    // Column(
+                                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                                    //   children: [
+                                    //     const Text("Drop time",style: TextStyle(color: colors.primary,fontSize: 14,fontWeight: FontWeight.bold)),
+                                    //     Text("${currentData?.orders?[i].toTime}",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
+                                    //   ],
+                                    // ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        showStatus(currentData?.orders?[i].orderId);
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        width: 80,
+                                        decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: BorderRadius.circular(8)),
+                                        child: const Center(
+                                          child: Text(
+                                            "Done",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    InkWell(
+                                      onTap: () {
+                                        print("neweeeeeee");
+                                        canceldialog(currentData?.orders?[i].orderId);
+                                      },
+                                      child: Container(
+                                          height: 40,
+                                          width: 80,
+                                          decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                              BorderRadius.circular(8)),
+                                          child: const Center(
+                                            child: Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .white),
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Expanded(
+                //       flex: 1,
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           const Text("Single Pick Up",style: TextStyle(color: colors.primary,fontWeight: FontWeight.bold)),
+                //           Container(
+                //             height: 100,
+                //             width: 100,
+                //             decoration: BoxDecoration(
+                //                 borderRadius: BorderRadius.circular(8),
+                //                 image: const DecorationImage(scale:0.5,image: AssetImage("assets/profile.png",))
+                //             ),
+                //           ),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: const [
+                //               Text("Weight:",style: TextStyle(
+                //                 color:  colors.primary,
+                //                 fontWeight: FontWeight.bold,
+                //                 fontSize: 12,
+                //               ),
+                //               ),
+                //               Text("3kg",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10,),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: const [
+                //               Text("Distance:",style: TextStyle(color:  colors.primary,fontSize: 12,fontWeight: FontWeight.bold)),
+                //               Text("1.38KM",style: TextStyle(color: colors.primary, fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10,),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: [
+                //               Text("Amount:",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold)),
+                //               Text("Rs. 180",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10,),
+                //            Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: const [
+                //               Text("Payment:",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold)),
+                //               Text("COD",style: TextStyle(color:  Color(0xFF112c48),fontSize: 12,fontWeight: FontWeight.bold))
+                //             ],
+                //           ),
+                //            SizedBox(height: 10,),
+                //             Center(child: Column(
+                //             children: [
+                //               Text("Bill",style: TextStyle(color:  Color(0xFF112c48),),),
+                //               Icon(Icons.receipt,color:  Color(0xFF112c48),),
+                //             ],
+                //           ))
+                //
+                //         ],
+                //       ),
+                //     ),
+                //     const VerticalDivider(
+                //       color:  Color(0xFF112c48),
+                //       width: 2,
+                //       thickness: 2,
+                //     ),
+                //     Expanded(
+                //       flex: 2,
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(left: 8),
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //              Row(
+                //               mainAxisAlignment: MainAxisAlignment.end,
+                //               children: const [
+                //                 Text("Date - 12/09/2023",style: TextStyle(color: Color(0xFF112c48),fontWeight: FontWeight.bold)),
+                //               ],
+                //             ),
+                //             const Text("Clothes",style: TextStyle(color: Color(0xFF112c48),fontSize: 20,fontWeight: FontWeight.bold)),
+                //             const Text("Note.....",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
+                //             Row(
+                //               crossAxisAlignment: CrossAxisAlignment.start,
+                //               children: [
+                //                   Column(
+                //                   children: const [
+                //                     SizedBox(
+                //                       height: 16,
+                //                     ),
+                //                     DotWidget(),
+                //                   ],
+                //                 ),
+                //                 Column(
+                //                   children: [
+                //                     const SizedBox(
+                //                       height: 12,
+                //                     ),
+                //                     Indicator(
+                //                         lineWidth: 16,
+                //                         lineHeight: 2,
+                //                         endWidget: Container(
+                //                           height: 16,
+                //                           width: 16,
+                //                           decoration: const BoxDecoration(
+                //                               color: Colors.green,
+                //                               shape: BoxShape.circle
+                //                           ),
+                //                         )),
+                //                     const SizedBox(height: 64,),
+                //                     Indicator(
+                //                         lineWidth: 16,
+                //                         lineHeight: 2,
+                //                         endWidget:  Container(
+                //                           height: 16,
+                //                           width: 16,
+                //                           decoration:const BoxDecoration(
+                //                               color: Colors.red,
+                //                               shape: BoxShape.circle
+                //                           ),
+                //                         )),
+                //                   ],
+                //                 ),
+                //                  SizedBox(width: 4,),
+                //                   Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start ,
+                //                   children: [
+                //                     const Text(
+                //                       '372 Mclean Rd,\nMilner, GA, 30257',
+                //                       style: TextStyle(
+                //                           fontWeight: FontWeight.bold
+                //                       ),
+                //
+                //                     ),
+                //                     Row(
+                //                       children: const [
+                //                         Icon(Icons.phone, color: Colors.red,size: 16,),
+                //                         Text("8760969005", style: TextStyle(color: Colors.red),),
+                //                       ],
+                //                     ),
+                //                     SizedBox(height: 12,),
+                //                     const Text(
+                //                       '2580 Hebb Rd,\nWilsonville, AL,',
+                //                       style: TextStyle(
+                //                           fontWeight: FontWeight.bold
+                //                       ),
+                //                     ),
+                //                     Row(
+                //                       children: const [
+                //                         Icon(Icons.phone, color: Colors.red,size: 16,),
+                //                         Text("8760969005", style: TextStyle(color: Colors.red),),
+                //                       ],
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 const SizedBox(width: 16,),
+                //                  Column(
+                //                   children: const [
+                //                     SizedBox(
+                //                       height: 8,
+                //                     ),
+                //                     Icon(Icons.pin_drop_outlined,color: Colors.red,),
+                //                     SizedBox(
+                //                       height: 48,
+                //                     ),
+                //                     Icon(Icons.pin_drop_outlined,color: Colors.red,),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //              Row(
+                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //               children: [
+                //                 Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: const [
+                //                     Text("Pick up time",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
+                //                     Text("12: 30 PM",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
+                //                   ],
+                //                 ),
+                //                 Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: const [
+                //                     Text("Drop time",style: TextStyle(color: Color(0xFF112c48),fontSize: 14,fontWeight: FontWeight.bold)),
+                //                     Text("01: 30 PM",style: TextStyle(color: Colors.red,fontSize: 12,fontWeight: FontWeight.bold)),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //             const SizedBox(
+                //
+                //             ),
+                //             Row(
+                //               mainAxisAlignment: MainAxisAlignment.end,
+                //               children: [
+                //                 Container(
+                //                     height: 40,
+                //                     width: 80,
+                //                     decoration: BoxDecoration(
+                //                         color: Colors.red,
+                //                         borderRadius: BorderRadius.circular(8)
+                //                     ),
+                //                     child: const Center(child: Text("Cancel",style: TextStyle(color: Colors.white),),)
+                //                 ),
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ),
+            );
+          }),
     );
   }
 }

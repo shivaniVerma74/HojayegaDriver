@@ -89,27 +89,30 @@ class _SubmitState extends State<Submit> {
                 ),
                 const Text(
                   "Document Submit Successfully",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: colors.primary),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
                 const Text(
-                  "We Will Get Back To You \n    For KYC Verification",
+                  "We Will Get Back To You For KYC Verification",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF100F0F),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 InkWell(
                   onTap: () {
+                    print("submitttttttttttttt ${widget.BankName}  ${widget.Ifsc}  ${widget.UpiId}  ${widget.City} ");
                     Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationFees(
                       Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
                       Date: widget.Date, Vehicle: widget.Vehicle, Contact: widget.Contact, Address: widget.Address,
@@ -119,8 +122,13 @@ class _SubmitState extends State<Submit> {
                       Electricity: widget.Electricity, Police: widget.Police,
                       AadharFront: widget.AadharFront,
                       AadharBack: widget.AadharBack,
-                    ),
-                    ),
+                        BankName: widget.BankName,
+                        AccountNumber: widget.AccountNumber,
+                        Ifsc: widget.Ifsc,
+                        UpiId: widget.UpiId,
+                        QrImage: widget.QrImage.toString()
+                         ),
+                       ),
                     );
                   },
                   child: Container(

@@ -4,6 +4,8 @@ import 'package:hojayegadriverapp/Authview/loginscreen.dart';
 import 'package:hojayegadriverapp/Screen/HomeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Authview/IntroScreen.dart';
+
 String? finalOtp;
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -32,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToHome() {
     Future.delayed(const Duration(milliseconds:35),() {
       if (finalOtp == null || finalOtp ==  '') {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const IntroScreen()));
       } else {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const HomePage()));
       }

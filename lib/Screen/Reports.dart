@@ -26,11 +26,42 @@ class _ReportsState extends State<Reports> {
   void initState(){
     super.initState();
     getReport();
+    monthOfCurrentWeek = _getCurrentWeekData();
+    print("${monthOfCurrentWeek}______________________");
+  }
+  Map ?monthOfCurrentWeek ;
+  String? mondayWeek;
+  String? SundayWeek;
+
+  Map<String, dynamic> _getCurrentWeekData() {
+    Map<String, dynamic> weekData = {};
+    DateTime now = DateTime.now();
+    int currentDayOfWeek = now.weekday;
+    DateTime startOfWeek = now.subtract(Duration(days: currentDayOfWeek - 1));
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+    weekData['month'] = startOfWeek;
+    weekData['monday'] = startOfWeek;
+    weekData['sunday'] = endOfWeek;
+    return weekData;
   }
 
   GetReportsModel? getReportsModel;
   String? driver_id;
-  getReport() async{
+
+  String convertDate(String date ) {
+    String dateString = date;
+    String dateOnly = parseDate(dateString);
+     return dateOnly;
+  }
+
+  String parseDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    String formattedDate = '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+    return formattedDate;
+  }
+
+  getReport() async {
+    Map<String, dynamic> weekDays = _getCurrentWeekData();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     driver_id = prefs.getString('driver_id');
     var headers = {
@@ -38,7 +69,9 @@ class _ReportsState extends State<Reports> {
     };
     var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getReports));
     request.fields.addAll({
-      'driver_id': driver_id.toString()
+      'driver_id': driver_id.toString(),
+      'start_date': convertDate(weekDays['monday'].toString()),
+      'end_date': convertDate(weekDays['sunday'].toString()),
     });
     print("driver id is in report screen ${request.fields}");
     request.headers.addAll(headers);
@@ -49,6 +82,7 @@ class _ReportsState extends State<Reports> {
       print("responseeee $finalResult");
       setState(() {
         getReportsModel = finalResult;
+        print("reoorpeorpeopeor ${getReportsModel?.data?.totalCodOrders}");
       });
     }
     else {
@@ -206,7 +240,7 @@ class _ReportsState extends State<Reports> {
                               child: Center(
                                 child: Text(
                                   '${getReportsModel?.data?.totalOrders}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -269,9 +303,8 @@ class _ReportsState extends State<Reports> {
                                   shape: BoxShape.circle),
                               child: Center(
                                 child: Text(
-                                  '${getReportsModel?.data?.totalCancel}',
+                                  '${getReportsModel?.data?.totalCodOrders}',
                                   style: TextStyle(
-
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -334,7 +367,7 @@ class _ReportsState extends State<Reports> {
                                   shape: BoxShape.circle),
                               child:  Center(
                                 child: Text(
-                                  '${getReportsModel?.data?.totalHours}',
+                                  '${getReportsModel?.data?.totalEarning}',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold),
@@ -361,104 +394,104 @@ class _ReportsState extends State<Reports> {
           const SizedBox(
             height: 10,
           ),
-          Row(
-            children: [
-              const Text(
-                'Date:',
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                date1 ?? " Select date",
-                style: const TextStyle(
-                    color: Color(0xFF112c48),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ),
-              Text(
-                date2 != null ? " to $date2 " : " to Select date",
-                style: const TextStyle(
-                    color: Color(0xFF112c48),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-              ),
-              showDate
-                  ? IconButton(
-                  onPressed: () async {
-                    DateTime? selectedDate1 = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2023, 12, 31));
-                    if (selectedDate1 != null) {
-                      setState(() {
-                        initialDate = selectedDate1;
-                        date1 =
-                        "${selectedDate1.day}/${selectedDate1.month}/${selectedDate1.year}";
-                        showDate = false;
-                      });
-                    }
-                    // DateTime? selectedDate2 = await showDatePicker(
-                    //     context: context,
-                    //     initialDate: DateTime.now(),
-                    //     firstDate: DateTime.now(),
-                    //     lastDate: DateTime(2023, 12, 31));
-
-                    // if (selectedDate != null) {
-                    //   setState(() {
-                    //     date2 =
-                    //         "${selectedDate2.day}/${selectedDate2.month}/${selectedDate2.year}";
-                    //     showDate2 = true;
-                    //   });
-                    // }
-                  },
-                  icon: const Icon(
-                    Icons.calendar_month_outlined,
-                    color: Color(0xFF112c48),
-                  ))
-                  : IconButton(
-                  onPressed: () async {
-                    DateTime? selectedDate = await showDatePicker(
-                        context: context,
-                        initialDate: initialDate,
-                        firstDate: initialDate,
-                        lastDate: DateTime(2023, 12, 31));
-
-                    if (selectedDate != null) {
-                      setState(() {
-                        date2 =
-                        "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-                        showDate = true;
-                      });
-                    }
-                    // DateTime? selectedDate2 = await showDatePicker(
-                    //     context: context,
-                    //     initialDate: DateTime.now(),
-                    //     firstDate: DateTime.now(),
-                    //     lastDate: DateTime(2023, 12, 31));
-
-                    // if (selectedDate != null) {
-                    //   setState(() {
-                    //     date2 =
-                    //         "${selectedDate2.day}/${selectedDate2.month}/${selectedDate2.year}";
-                    //     showDate2 = true;
-                    //   });
-                    // }
-                  },
-                  icon: const Icon(
-                    Icons.calendar_month_outlined,
-                    color: Color(0xFF112c48),
-                  ))
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          // Row(
+          //   children: [
+          //     const Text(
+          //       'Date:',
+          //       style: TextStyle(
+          //           color: Color(0xFF112c48),
+          //           fontWeight: FontWeight.bold,
+          //           fontSize: 24),
+          //     ),
+          //     const SizedBox(
+          //       width: 10,
+          //     ),
+          //     Text(
+          //       date1 ?? " Select date",
+          //       style: const TextStyle(
+          //           color: Color(0xFF112c48),
+          //           fontWeight: FontWeight.bold,
+          //           fontSize: 16),
+          //     ),
+          //     Text(
+          //       date2 != null ? " to $date2 " : " to Select date",
+          //       style: const TextStyle(
+          //           color: Color(0xFF112c48),
+          //           fontWeight: FontWeight.bold,
+          //           fontSize: 16),
+          //     ),
+          //     showDate
+          //         ? IconButton(
+          //         onPressed: () async {
+          //           DateTime? selectedDate1 = await showDatePicker(
+          //               context: context,
+          //               initialDate: DateTime.now(),
+          //               firstDate: DateTime.now(),
+          //               lastDate: DateTime(2023, 12, 31));
+          //           if (selectedDate1 != null) {
+          //             setState(() {
+          //               initialDate = selectedDate1;
+          //               date1 =
+          //               "${selectedDate1.day}/${selectedDate1.month}/${selectedDate1.year}";
+          //               showDate = false;
+          //             });
+          //           }
+          //           // DateTime? selectedDate2 = await showDatePicker(
+          //           //     context: context,
+          //           //     initialDate: DateTime.now(),
+          //           //     firstDate: DateTime.now(),
+          //           //     lastDate: DateTime(2023, 12, 31));
+          //
+          //           // if (selectedDate != null) {
+          //           //   setState(() {
+          //           //     date2 =
+          //           //         "${selectedDate2.day}/${selectedDate2.month}/${selectedDate2.year}";
+          //           //     showDate2 = true;
+          //           //   });
+          //           // }
+          //         },
+          //         icon: const Icon(
+          //           Icons.calendar_month_outlined,
+          //           color: Color(0xFF112c48),
+          //         ))
+          //         : IconButton(
+          //         onPressed: () async {
+          //           DateTime? selectedDate = await showDatePicker(
+          //               context: context,
+          //               initialDate: initialDate,
+          //               firstDate: initialDate,
+          //               lastDate: DateTime(2023, 12, 31));
+          //
+          //           if (selectedDate != null) {
+          //             setState(() {
+          //               date2 =
+          //               "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+          //               showDate = true;
+          //             });
+          //           }
+          //           // DateTime? selectedDate2 = await showDatePicker(
+          //           //     context: context,
+          //           //     initialDate: DateTime.now(),
+          //           //     firstDate: DateTime.now(),
+          //           //     lastDate: DateTime(2023, 12, 31));
+          //
+          //           // if (selectedDate != null) {
+          //           //   setState(() {
+          //           //     date2 =
+          //           //         "${selectedDate2.day}/${selectedDate2.month}/${selectedDate2.year}";
+          //           //     showDate2 = true;
+          //           //   });
+          //           // }
+          //         },
+          //         icon: const Icon(
+          //           Icons.calendar_month_outlined,
+          //           color: Color(0xFF112c48),
+          //         ))
+          //   ],
+          // ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
           Row(
             children: [
               Container(
@@ -484,7 +517,7 @@ class _ReportsState extends State<Reports> {
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '₹ ${getReportsModel?.data?.totalSum}',
+                        '₹ ${getReportsModel?.data?.totalEarning}',
                         style: TextStyle(
                           color: Color(0xFF112c48),
                         ),
@@ -519,7 +552,7 @@ class _ReportsState extends State<Reports> {
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '₹ ${getReportsModel?.data?.totalCod}',
+                        '₹ ${getReportsModel?.data?.totalCodOrders}',
                         style: TextStyle(
                           color: Color(0xFF112c48),
                         ),
@@ -586,7 +619,7 @@ class _ReportsState extends State<Reports> {
                 child:  Center(
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         'Settlement Amount',
                         style: TextStyle(
                             color: Color(0xFF112c48),
@@ -594,7 +627,7 @@ class _ReportsState extends State<Reports> {
                       ),
                       Text(
                         '₹ ${getReportsModel?.data?.settlementAmount}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF112c48),
                         ),
                       ),

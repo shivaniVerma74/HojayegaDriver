@@ -161,7 +161,7 @@ class _EditProfileState extends State<MyProfile> {
         centerTitle: true,
         toolbarHeight: 60,
         elevation: 6,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16))),
         leading: InkWell(
           onTap: () {
@@ -188,31 +188,31 @@ class _EditProfileState extends State<MyProfile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Stack(alignment: Alignment.bottomRight, children: [
-                  // CircleAvatar(
-                  //   backgroundColor: Colors.white,
-                  //   backgroundImage: image == null
-                  //       ?  Image.file("${getProfileModel?.data?.first.proPic}")
-                  //       : Image.file(image!).image, radius: 56,
-                  // ),
-                  GestureDetector(
-                    onTap: showImageDialog,
-                    child: Container(
-                        height: 30,
-                        width: 30,
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.green,
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                        ),
-                    ),
-                  ),
-                ]),
-              ),
+              // Center(
+              //   child: Stack(alignment: Alignment.bottomRight, children: [
+              //     // CircleAvatar(
+              //     //   backgroundColor: Colors.white,
+              //     //   backgroundImage: image == null
+              //     //       ?  Image.file("${getProfileModel?.data?.first.proPic}")
+              //     //       : Image.file(image!).image, radius: 56,
+              //     // ),
+              //     GestureDetector(
+              //       onTap: showImageDialog,
+              //       child: Container(
+              //           height: 30,
+              //           width: 30,
+              //           padding: EdgeInsets.all(8),
+              //           decoration: BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: Colors.green,
+              //           ),
+              //           child: const Icon(
+              //             Icons.edit,
+              //           ),
+              //       ),
+              //     ),
+              //   ]),
+              // ),
               const SizedBox(
                 height: 16,
               ),
@@ -357,8 +357,8 @@ class _EditProfileState extends State<MyProfile> {
                             DateTime? pickedDate = await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime(1990, 01, 01),
-                                lastDate: DateTime(2023, 12, 31));
+                                firstDate: DateTime(1960, 01, 01),
+                                lastDate: DateTime(2025, 12, 31));
                             if (pickedDate != null) {
                               setState(() {
                                 dobController.text =
@@ -969,278 +969,278 @@ class _EditProfileState extends State<MyProfile> {
               const SizedBox(
                 height: 10,
               ),
-              Row(
-                children: [
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                              offset: Offset(0, 1))
-                        ]),
-                    child: const Icon(
-                      Icons.qr_code,
-                      color: Colors.green,
-                      size: 32,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
-                        child: TextFormField(
-                          decoration:  InputDecoration(
-                              hintText: "${getProfileModel?.data?.first.qrCode}",
-                              suffixIcon: Icon(
-                                Icons.file_upload_outlined,
-                                color: Colors.green,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              border: InputBorder.none),
-                        )),
-                  )
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     Container(
+              //       height: 48,
+              //       width: 48,
+              //       decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(8),
+              //           boxShadow: const [
+              //             BoxShadow(
+              //                 color: Colors.grey,
+              //                 blurRadius: 2,
+              //                 offset: Offset(0, 1))
+              //           ]),
+              //       child: const Icon(
+              //         Icons.qr_code,
+              //         color: Colors.green,
+              //         size: 32,
+              //       ),
+              //     ),
+              //     const SizedBox(
+              //       width: 8,
+              //     ),
+              //     // Expanded(
+              //     //   child: Container(
+              //     //       height: 48,
+              //     //       decoration: BoxDecoration(
+              //     //           color: Colors.white,
+              //     //           borderRadius: BorderRadius.circular(8),
+              //     //           boxShadow: const [
+              //     //             BoxShadow(
+              //     //                 color: Colors.grey,
+              //     //                 blurRadius: 2,
+              //     //                 offset: Offset(0, 1))
+              //     //           ]),
+              //     //       child: TextFormField(
+              //     //         decoration:  InputDecoration(
+              //     //             hintText: "${getProfileModel?.data?.first.qrCode}",
+              //     //             suffixIcon: Icon(
+              //     //               Icons.file_upload_outlined,
+              //     //               color: Colors.green,
+              //     //             ),
+              //     //             contentPadding: EdgeInsets.symmetric(
+              //     //                 horizontal: 16, vertical: 8),
+              //     //             border: InputBorder.none),
+              //     //       )),
+              //     // )
+              //   ],
+              // ),
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                "  Upload Documents",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "  Click Selfie",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child:  Row(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Click Photo")
-                    ],
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "  Upload Driving Licence Image",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child:  Row(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Click Photo")
-                    ],
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "  Upload Electricity Bill",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child:  Row(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Click Photo")
-                    ],
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "  Upload Police Verification",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child:  Row(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Click Photo")
-                    ],
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "  Aadhar Card Front Image",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child:  Row(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Click Photo")
-                    ],
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "Aadhar Card Back Image",
-                style: TextStyle(
-                    color: Color(0xFF112c48),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2,
-                            offset: Offset(0, 1))
-                      ]),
-                  child:  Row(
-                    children: const [
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.green,
-                        size: 32,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Click Photo")
-                    ],
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
+              // const Text(
+              //   "  Upload Documents",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Text(
+              //   "  Click Selfie",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Container(
+              //     padding: const EdgeInsets.all(8),
+              //     height: 48,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(8),
+              //         boxShadow: const [
+              //           BoxShadow(
+              //               color: Colors.grey,
+              //               blurRadius: 2,
+              //               offset: Offset(0, 1))
+              //         ]),
+              //     child:  Row(
+              //       children: const [
+              //         Icon(
+              //           Icons.camera_alt,
+              //           color: Colors.green,
+              //           size: 32,
+              //         ),
+              //         SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text("Click Photo")
+              //       ],
+              //     )),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Text(
+              //   "  Upload Driving Licence Image",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Container(
+              //     padding: const EdgeInsets.all(8),
+              //     height: 48,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(8),
+              //         boxShadow: const [
+              //           BoxShadow(
+              //               color: Colors.grey,
+              //               blurRadius: 2,
+              //               offset: Offset(0, 1))
+              //         ]),
+              //     child:  Row(
+              //       children: const [
+              //         Icon(
+              //           Icons.camera_alt,
+              //           color: Colors.green,
+              //           size: 32,
+              //         ),
+              //         SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text("Click Photo")
+              //       ],
+              //     )),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Text(
+              //   "  Upload Electricity Bill",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Container(
+              //     padding: const EdgeInsets.all(8),
+              //     height: 48,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(8),
+              //         boxShadow: const [
+              //           BoxShadow(
+              //               color: Colors.grey,
+              //               blurRadius: 2,
+              //               offset: Offset(0, 1))
+              //         ]),
+              //     child:  Row(
+              //       children: const [
+              //         Icon(
+              //           Icons.camera_alt,
+              //           color: Colors.green,
+              //           size: 32,
+              //         ),
+              //         SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text("Click Photo")
+              //       ],
+              //     )),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Text(
+              //   "  Upload Police Verification",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Container(
+              //     padding: const EdgeInsets.all(8),
+              //     height: 48,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(8),
+              //         boxShadow: const [
+              //           BoxShadow(
+              //               color: Colors.grey,
+              //               blurRadius: 2,
+              //               offset: Offset(0, 1))
+              //         ]),
+              //     child:  Row(
+              //       children: const [
+              //         Icon(
+              //           Icons.camera_alt,
+              //           color: Colors.green,
+              //           size: 32,
+              //         ),
+              //         SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text("Click Photo")
+              //       ],
+              //     )),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Text(
+              //   "  Aadhar Card Front Image",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Container(
+              //     padding: const EdgeInsets.all(8),
+              //     height: 48,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(8),
+              //         boxShadow: const [
+              //           BoxShadow(
+              //               color: Colors.grey,
+              //               blurRadius: 2,
+              //               offset: Offset(0, 1))
+              //         ]),
+              //     child:  Row(
+              //       children: const [
+              //         Icon(
+              //           Icons.camera_alt,
+              //           color: Colors.green,
+              //           size: 32,
+              //         ),
+              //         SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text("Click Photo")
+              //       ],
+              //     )),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // const Text(
+              //   "Aadhar Card Back Image",
+              //   style: TextStyle(
+              //       color: Color(0xFF112c48),
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.bold),
+              // ),
+              // Container(
+              //     padding: const EdgeInsets.all(8),
+              //     height: 48,
+              //     decoration: BoxDecoration(
+              //         color: Colors.white,
+              //         borderRadius: BorderRadius.circular(8),
+              //         boxShadow: const [
+              //           BoxShadow(
+              //               color: Colors.grey,
+              //               blurRadius: 2,
+              //               offset: Offset(0, 1))
+              //         ]),
+              //     child:  Row(
+              //       children: const [
+              //         Icon(
+              //           Icons.camera_alt,
+              //           color: Colors.green,
+              //           size: 32,
+              //         ),
+              //         SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text("Click Photo")
+              //       ],
+              //     )),
+              // const SizedBox(
+              //   height: 10,
+              // ),
               Center(
                 child: GestureDetector(
                   onTap: () {},

@@ -27,5 +27,7 @@ class ApiServicves{
   static const String withdrawList = baseUrl+'withdrawl_list';
   static const String orderHistory = baseUrl+'get_order_history';
   static const String statusUpdate = baseUrl+'complete_booking';
+  static const String notification = baseUrl+'notifications';
+  static const String getArea = baseUrl+'get_regions';
 
 }

@@ -229,7 +229,7 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10)),
                     child: vehicalInformatin()),
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
               ],
@@ -290,7 +290,8 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
           ),
           InkWell(
               onTap: () {
-                showAlertDialog(context, "selfieImage");
+                pickImage(ImageSource.camera, 'selfieImage');
+                // showAlertDialog(context, "selfieImage");
               },
               child: selfie()),
           const SizedBox(
@@ -377,15 +378,17 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
           ),
           InkWell(
             onTap: () {
+              print("kyc detailssss${electricityImage!.path} ${policeImage!.path} ${aadharImage!.path} ${aadharBack!.path} ${selfieImage!.path}"
+                  "${widget.States} ${widget.City} ${widget.UpiId} ${widget.Ifsc} ${widget.BankName} ${widget.QrImage} ===========");
               Navigator.push(context, MaterialPageRoute(builder: (context) => Submit(
                       Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
                       Date: widget.Date, Vehicle: widget.Vehicle, Contact: widget.Contact, Address: widget.Address,
                       States: widget.States, City: widget.City, Region: widget.Region, Zip: widget.Zip,
                       lat: widget.lat, long: widget.long, VehicleType: widget.VehicleType, Pincode: widget.Pincode,
-                    Selfie: selfieImage.toString(), Driving: drivingImage.toString(),
-                    Electricity: electricityImage.toString(), Police: policeImage.toString(),
-                    AadharFront: aadharImage.toString(),
-                    AadharBack: aadharBack.toString(),
+                    Selfie: selfieImage!.path, Driving: drivingImage!.path,
+                    Electricity: electricityImage!.path, Police: policeImage!.path,
+                    AadharFront: aadharImage!.path,
+                    AadharBack: aadharBack!.path,
                     BankName: widget.BankName,
                     AccountNumber: widget.AccountNumber,
                     Ifsc:widget.Ifsc, UpiId: widget.UpiId,
@@ -602,6 +605,7 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
               ElevatedButton(
                 onPressed: () {
                   pickImage(ImageSource.gallery, type);
+                  Navigator.pop(context);
                   // getImage(ImageSource.camera, context, 1);
                 },
                 child: Text('Gallery'),
@@ -612,6 +616,7 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
               ElevatedButton(
                 onPressed: () {
                   pickImage(ImageSource.camera, type);
+                  Navigator.pop(context);
                 },
                 child: Text('Camera'),
               ),

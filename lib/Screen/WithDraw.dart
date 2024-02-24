@@ -27,7 +27,6 @@ class _WithDrawState extends State<WithDraw> {
     walletTransactions();
   }
 
-
   String? driver_id;
   String? wallet_balance;
 
@@ -40,14 +39,14 @@ class _WithDrawState extends State<WithDraw> {
     var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.withdrawRequest));
     request.fields.addAll({
       'user_id': driver_id.toString(),
-      'amount': amtC!.text,
-      'ac_no': acountNumberC!.text,
-      'ifsc_code': ifscC!.text,
-      'ac_holder_name': holderC!.text,
-      'bank_name': msgC!.text,
+      'amount': amtC?.text.toString() ?? "",
+      'ac_no': acountNumberC?.text ?? "",
+      'ifsc_code': ifscC?.text ?? "",
+      'ac_holder_name': holderC?.text ?? "",
+      'bank_name': msgC?.text ?? "",
       'account_type': 'RazorPay'
     });
-    print("withdwa reuest parameyer ${request.fields}");
+    print("withdwa reuest paccccccrameyer ${request.fields}");
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
@@ -124,10 +123,16 @@ class _WithDrawState extends State<WithDraw> {
 
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  TextEditingController? amtC, msgC, nameC, holderC, acountNumberC, ifscC;
+
+  TextEditingController amtC=TextEditingController();
+  TextEditingController  msgC=TextEditingController();
+  TextEditingController  holderC=  TextEditingController();
+  TextEditingController acountNumberC=  TextEditingController();
+  TextEditingController ifscC=  TextEditingController();
   StateSetter? dialogState;
 
   _showDialog() async {
+
     await dialogAnimate(context,
         StatefulBuilder(builder: (BuildContext context, StateSetter setStater) {
           dialogState = setStater;
@@ -276,8 +281,10 @@ class _WithDrawState extends State<WithDraw> {
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
+                      print("@@@@@@@@@@@${amtC?.text} ${msgC?.text} ${ifscC?.text} ${acountNumberC?.text} ${holderC?.text}");
                       final form = _formkey.currentState!;
-                      if (form.validate() && amtC!.text != '0') {
+                      if (form.validate() && amtC?.text != '0') {
+                        // print("@@@@@@@@@@@${amtC?.text} ${msgC?.text} ${ifscC?.text} ${acountNumberC?.text} ${holderC?.text}");
                         withdrawRequest();
                         Navigator.pop(context);
                       }
@@ -408,8 +415,8 @@ class _WithDrawState extends State<WithDraw> {
                  const Text("Current Balance", style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary, fontSize: 19)),
                  const SizedBox(height: 5,),
                  wallet_balance == null || wallet_balance == "" ?
-                 const Text("₹ 0.0", style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary, fontSize: 17)):
-                 Text("₹ $wallet_balance", style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary, fontSize: 17)),
+                 const Text("₹ 500", style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary, fontSize: 17)):
+                  Text("₹ $wallet_balance", style: TextStyle(fontWeight: FontWeight.bold, color: colors.primary, fontSize: 17)),
                  const SizedBox(height: 20),
                  InkWell(
                    onTap: () {

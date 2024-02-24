@@ -205,18 +205,19 @@ class _CustomerSupportState extends State<CustomerSupport>
                           ? ticketList.length + 1
                           : ticketList.length,
                       itemBuilder: (context, index) {
-                        return (index == ticketList.length &&
-                            isLoadingmore)
-                            ? Center(
+                        return (index == ticketList.length && isLoadingmore)
+                            ? const Center(
                             child:
                             CircularProgressIndicator())
                             : ticketItem(index);
                       })
-                      : Container(
-                      height: deviceHeight! - kToolbarHeight -
-                          MediaQuery.of(context).padding.top,
-                      child: Text("No Data"),
-                  )
+                      : Padding(
+                        padding: const EdgeInsets.only(top: 150),
+                        child: Container(
+                        // height: deviceHeight! - kToolbarHeight -
+                        //     MediaQuery.of(context).padding.top,
+                        child: const Text("No Data To Show", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),),
+                  ),)
                 ],
               ),
             )),

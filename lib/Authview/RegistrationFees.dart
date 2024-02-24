@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hojayegadriverapp/Authview/loginscreen.dart';
 import 'package:hojayegadriverapp/Helper/api.path.dart';
 import 'package:hojayegadriverapp/Screen/HomeScreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -82,6 +83,7 @@ String? mobileHolder;
           bagAmt =  jsonresponse['setting']['bag_amount'];
           jacketAmt =  jsonresponse['setting']['jacket'];
           mobileHolder =  jsonresponse['setting']['mobile_holder'];
+          // addAmount[0].abs( jsonresponse['setting']['bag_amount']);
           print("registration feess $registrationFee");
           print("registration feess $bagAmt");
           print("registration feess $jacketAmt");
@@ -108,6 +110,7 @@ String? mobileHolder;
       'dob': widget.Date.toString(),
       'vehicle_type': widget.VehicleType.toString(),
       'vehicle_number': widget.Vehicle.toString(),
+      // 'altername_number': "",
       'mobile': widget.Contact.toString(),
       'address': widget.Address.toString(),
       'state':widget.States.toString(),
@@ -125,39 +128,40 @@ String? mobileHolder;
       'upi_id': widget.UpiId.toString(),
     });
 
-    // if (widget.AadharFront != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('adhar_car_front', widget.AadharFront!.toString()));
-    // }
-    // if (widget.AadharBack != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('adhar_car_back', widget.AadharBack!.toString()));
-    // }
-    // if (widget.Selfie != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('pro_pic', widget.Selfie!.toString()));
-    // }
-    // if (widget.Driving != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('licence', widget.Driving!.toString()));
-    // }if (widget.Electricity != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('electricity_bill', widget.Electricity!.toString()));
-    // }if (widget.Police != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('policy_verification', widget.Police!.toString()));
-    // } if (widget.QrImage != null) {
-    //   request.files.add(
-    //       await http.MultipartFile.fromPath('policy_verification', widget.QrImage!.toString()));
-    // }
+    if (widget.AadharFront != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('adhar_car_front', widget.AadharFront!.toString()));
+    }
+    if (widget.AadharBack != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('adhar_car_back', widget.AadharBack!.toString()));
+    }
+    if (widget.Selfie != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('pro_pic', widget.Selfie!.toString()));
+    }
+    if (widget.Driving != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('licence', widget.Driving!.toString()));
+    }if (widget.Electricity != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('electricity_bill', widget.Electricity!.toString()));
+    }if (widget.Police != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('policy_verification', widget.Police!.toString()));
+    } if (widget.QrImage != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('policy_verification', widget.QrImage!.toString()));
+    }
 
     print("registration parameter ${request.fields}");
     print("registration filessssss ${request.files}");
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
+      print("kljkjkjjjjjljlk");
       print(await response.stream.bytesToString());
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
     }
     else {
       print(response.reasonPhrase);
@@ -173,7 +177,9 @@ String? mobileHolder;
   void _handlePaymentError(PaymentFailureResponse response) {
     Fluttertoast.showToast(msg: "Payment cancelled by user");}
 
-  void _handleExternalWallet(ExternalWalletResponse response) {}
+  void _handleExternalWallet(ExternalWalletResponse response) {
+
+  }
 
 
   Razorpay? _razorpay;
@@ -198,6 +204,9 @@ String? mobileHolder;
 
   List<String> list = ['Bag', 'Jacket', 'Mobile Holder'];
   int selected = 0;
+  List<int> selectedIndices = [];
+  List<int> addAmount = [3];
+
   var isselected;
 
   @override
@@ -224,18 +233,88 @@ String? mobileHolder;
         ),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Center(
               child: Text(
-                'Registration Fees 500 Rs.',
+                'Registration Fees',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ), const Center(
+              child: Text(
+                '500 Rs.',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 7),
+              child: Container(
+                height: 60,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              selected = index;
+                              if (selectedIndices.contains(index)) {
+                                selectedIndices.remove(index);
+                              } else {
+                                selectedIndices.add(index);
+                              }
+                            });
+                            // if(index == 0){
+                            //   setState(() {
+                            //     isselected = bagAmt.toString();
+                            //     print("bag amount in tapp $bagAmt");
+                            //   });
+                            // }
+                            // else if(index == 1){
+                            //   setState(() {
+                            //     isselected = jacketAmt.toString();
+                            //     print("jacket amount in tapp $jacketAmt");
+                            //   });
+                            // }
+                            // else{
+                            //   setState(() {
+                            //     isselected = mobileHolder.toString();
+                            //     print("mobileee amount in tapp $mobileHolder");
+                            //   });
+                            // }
+                          },
+                    child: Icon(
+                    selectedIndices.contains(index)
+                    ? Icons.check_box_outlined
+                        : Icons.check_box_outline_blank,
+                    color: Colors.black,
+                    size: 25,
+                    ),
+                    ),
+                    Text(
+                    list[index],
+                    style: TextStyle(fontSize: 14, color: Colors.black),)
+
+                    ],
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      width: 18,
+                    );
+                  },
+                ),
+              ),
+            ),
+
             Container(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height/3,
                 child: const Image(
                   image: AssetImage("assets/images/jacket.png",
                   ),
@@ -255,82 +334,23 @@ String? mobileHolder;
             ),
              Container(
                height: 40,
-               width: 120,
+               width: 150,
                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: colors.white),
                child: Center(
                  child: isselected == "" || isselected == "" ? const Text("0.0 Rs.", style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: colors.primary),): Text(
                   'Total = ${isselected.toString()} Rs.',
                   style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: colors.primary),
                 ),
               ),
              ),
-            Padding(
-              padding: const EdgeInsets.only(left: 7),
-              child: Container(
-                height: 60,
-                width: MediaQuery.of(context).size.width,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              selected = index;
-                            });
-                              if(index == 0){
-                                setState(() {
-                                  isselected = bagAmt.toString();
-                                  print("bag amount in tapp $bagAmt");
-                                });
-                              }
-                              else if(index == 1){
-                                setState(() {
-                                  isselected = jacketAmt.toString();
-                                  print("jacket amount in tapp $jacketAmt");
-                                });
-                              }
-                              else{
-                                setState(() {
-                                  isselected = mobileHolder.toString();
-                                  print("mobileee amount in tapp $mobileHolder");
-                                });
-                              }
-                          },
-                          child: Icon(
-                            selected == index
-                                ? Icons.check_box_outlined
-                                : Icons.check_box_outline_blank,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(list[index],
-                            style: const TextStyle(fontSize: 15, color: Colors.black))
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      width: 18,
-                    );
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 17),
+            SizedBox(height: 20,),
+
             InkWell(
               onTap: () {
                 print("jaaakkjaaaaa");

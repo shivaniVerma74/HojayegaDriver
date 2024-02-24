@@ -86,10 +86,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const Padding(
                 padding:EdgeInsets.only(top: 15, left: 20, right: 10),
-                child: Text("Please enter email address or mobile number and password if you are already registered ,if not then signup for new account.",
+                child: Text("Please provide your registered email or mobile number along with your password. If not registered, sign up for  new account.",
                     style: TextStyle(fontWeight: FontWeight.bold, color: colors.white, fontSize: 15)),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Center(
                   child: Image.asset("assets/images/login.png", scale: 1.9,)),
               SizedBox(height: 20,),
@@ -186,7 +186,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ],
                                   ),
                                   child: TextFormField(
-                                    // validator: validatior,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please Enter password';
+                                      }
+                                      return null;
+                                    },
                                     obscureText: showPassword == true ? false : true,
                                     // obscuringCharacter: '*',
                                     controller: passCtr,
@@ -214,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          // crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 2),
@@ -240,15 +245,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Text('Remeber Me' ,style: TextStyle(fontSize: 12, color:  Colors.black)),
                               ],
                             ),
-                            const SizedBox(width: 70),
+                            const SizedBox(width: 30),
                             InkWell(
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPassword()));
                               },
-                                child: const Text("Forget Password ?", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: colors.secondary)))
+                                child: const Text("Forget Password?", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: colors.secondary)))
                           ],
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         Container(
                           height: 40,
                           width: MediaQuery.of(context).size.width/1.4,
