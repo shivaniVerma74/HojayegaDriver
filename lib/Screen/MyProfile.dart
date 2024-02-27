@@ -9,7 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../Helper/Color.dart';
 import '../Helper/api.path.dart';
+import '../Model/CityModel.dart';
+import '../Model/GetAreaModel.dart';
 import '../Model/GetProfileModel.dart';
+import '../Model/StateModel.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -36,6 +39,125 @@ class _EditProfileState extends State<MyProfile> {
   File? image;
   bool value = false;
   bool groupValue = false;
+
+  List<CityData> cityList = [];
+  List<StataData> stateList = [];
+  StataData? stateValue;
+  String? stateName;
+  String? stateId;
+  CityData? cityValue;
+  String? cityId;
+  String? cityName;
+  CountryData? countryValue;
+  String? countryId;
+
+  getstate() async {
+    print("state apiii isss");
+    var headers = {
+      'Cookie': 'ci_session=95bbd5f6f543e31f65185f824755bcb57842c775'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getStates));
+
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      String responseData = await response.stream.transform(utf8.decoder).join();
+      var userData = json.decode(responseData);
+      if (mounted) {
+        setState(() {
+          stateList = StateModel.fromJson(userData).data!;
+        });
+
+         for(int i=0;i<stateList.length;i++)
+           {
+             if(stateId==stateList[i].id)
+               stateValue=stateList[i];
+           }
+         setState(() {
+           getCity(stateValue?.id);
+
+         });
+      }
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  getCity(String? sId) async{
+    var headers = {
+      'Cookie': 'ci_session=95bbd5f6f543e31f65185f824755bcb57842c775'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getCitys));
+    request.fields.addAll({
+      'state_id': sId.toString()
+    });
+    print("state parameteer ${request.fields}");
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      String responseData = await response.stream.transform(utf8.decoder).join();
+      var userData = json.decode(responseData);
+      String? cityId;
+      if (mounted) {
+        setState(() {
+          cityList = CityModel.fromJson(userData).data!;
+          cityId=getProfileModel?.data?.first.city ;
+
+
+        });
+        for(int i=0;i<cityList.length;i++)
+        {
+          if(cityId==cityList[i].id)
+            cityValue=cityList[i];
+        }
+        setState(() {
+          getArea(cityValue?.id);
+
+        });
+
+
+      }
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+  }
+  List<CountryData> countryList = [];
+  getArea(String? city_Id) async {
+    var headers = {
+      'Cookie': 'ci_session=cb5a399c036615bb5acc0445a8cd39210c6ca648'
+    };
+    var request = http.MultipartRequest('POST', Uri.parse(ApiServicves.getArea));
+    request.fields.addAll({
+      'city_id': city_Id.toString()
+    });
+    print("get aresaa ${request.fields}");
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      String responseData = await response.stream.transform(utf8.decoder).join();
+      var userData = json.decode(responseData);
+      if (mounted) {
+        setState(() {
+          countryList = GetAreaModel.fromJson(userData).data!;
+          countryId=getProfileModel?.data?.first.region;
+
+
+        });
+        for(int i=0;i<countryList.length;i++)
+        {
+          if(countryId==countryList[i].id)
+            countryValue=countryList[i];
+        }
+        setState(() {
+
+        });
+      }
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+  }
 
   Future getFromCamera() async {
     final pickedFile = await ImagePicker()
@@ -67,6 +189,7 @@ class _EditProfileState extends State<MyProfile> {
   void initState() {
     super.initState();
     getDriverProfile();
+
   }
 
   showImageDialog() {
@@ -128,6 +251,7 @@ class _EditProfileState extends State<MyProfile> {
   getDriverProfile() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     driver_id = prefs.getString('driver_id');
+    print('id -----${driver_id}');
     var headers = {
       'Cookie': 'ci_session=e1247dd15fd8ad3d83555181acbb2f9348d054bb'
     };
@@ -143,7 +267,12 @@ class _EditProfileState extends State<MyProfile> {
       final finalResult = GetProfileModel.fromJson(json.decode(finalResponse));
       print("responseeee $finalResult");
       setState(() {
+
         getProfileModel = finalResult;
+        dobController.text= getProfileModel?.data?.first.dob ?? "";
+       stateId= getProfileModel?.data?.first.state;
+        getstate();
+
       });
     }
     else {
@@ -362,7 +491,7 @@ class _EditProfileState extends State<MyProfile> {
                             if (pickedDate != null) {
                               setState(() {
                                 dobController.text =
-                                    DateFormat("dd/MM/YYYY").format(pickedDate);
+                                    DateFormat("dd/MM/yyyy").format(pickedDate);
                               });
                             }
                           },
@@ -556,6 +685,55 @@ class _EditProfileState extends State<MyProfile> {
                         child: TextFormField(
                           controller: addressController,
                           decoration:  InputDecoration(
+                              hintText: "${getProfileModel?.data?.first.typeAddress}",
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              border: InputBorder.none),
+                        )),
+                  )
+                ],
+              ),   const SizedBox(
+                height: 10,
+              ),
+
+              Row(
+                children: [
+                  Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 2,
+                              offset: Offset(0, 1))
+                        ]),
+                    child: const Icon(
+                      Icons.pin_drop,
+                      color: Colors.green,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Colors.grey,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1))
+                            ]),
+                        child: TextFormField(
+                          controller: addressController,
+                          decoration:  InputDecoration(
                               hintText: "${getProfileModel?.data?.first.address}",
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
@@ -564,151 +742,377 @@ class _EditProfileState extends State<MyProfile> {
                   )
                 ],
               ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // Row(
+              //   children: [
+              //     Container(
+              //       height: 48,
+              //       width: 48,
+              //       decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(8),
+              //           boxShadow: const [
+              //             BoxShadow(
+              //                 color: Colors.grey,
+              //                 blurRadius: 2,
+              //                 offset: Offset(0, 1))
+              //           ]),
+              //       child: const Icon(
+              //         Icons.location_city,
+              //         color: Colors.green,
+              //         size: 32,
+              //       ),
+              //     ),
+              //     const SizedBox(
+              //       width: 8,
+              //     ),
+              //     Expanded(
+              //       child: Container(
+              //           height: 48,
+              //           decoration: BoxDecoration(
+              //               color: Colors.white,
+              //               borderRadius: BorderRadius.circular(8),
+              //               boxShadow: const [
+              //                 BoxShadow(
+              //                     color: Colors.grey,
+              //                     blurRadius: 2,
+              //                     offset: Offset(0, 1))
+              //               ]),
+              //           child: TextFormField(
+              //             controller: stateNameController,
+              //             decoration: InputDecoration(
+              //                 hintText: "${getProfileModel?.data?.first.state}",
+              //                 contentPadding: EdgeInsets.symmetric(
+              //                     horizontal: 16, vertical: 8),
+              //                 border: InputBorder.none),
+              //           )),
+              //     )
+              //   ],
+              // ),
+
+              const SizedBox(height: 10),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                          width: 48,
+                          height: 48,
+                          child: Image.asset("assets/images/state.png",scale: 1.5,)
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                        // width: 240,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(1.0, 1.0,),
+                              blurRadius: 0.2,
+                              spreadRadius: 0.5,
+                            ),
+                          ],
+                        ),
+                        child:
+                        DropdownButton(
+                          isExpanded: true,
+                          value: stateValue,
+                          hint: const Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text('State'),
+                          ),
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          // Array list of items
+                          items: stateList.map((items) {
+                            return
+                              DropdownMenuItem(
+                                value: items,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Container(
+                                      child: Text(items.name.toString())),
+                                ),
+                              );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (StataData? value) {
+                            setState(() {
+                              stateValue = value!;
+                              getCity("${stateValue!.id}");
+                              stateName = stateValue!.name;
+                              stateId = stateValue!.id;
+                              print("name herererb $stateName $stateId");
+                            });
+                          },
+                          underline: Container(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // Row(
+              //   children: [
+              //     Container(
+              //       height: 48,
+              //       width: 48,
+              //       decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(8),
+              //           boxShadow: const [
+              //             BoxShadow(
+              //                 color: Colors.grey,
+              //                 blurRadius: 2,
+              //                 offset: Offset(0, 1))
+              //           ]),
+              //       child: const Icon(
+              //         Icons.location_city,
+              //         color: Colors.green,
+              //         size: 32,
+              //       ),
+              //     ),
+              //     const SizedBox(
+              //       width: 8,
+              //     ),
+              //     Expanded(
+              //       child: Container(
+              //           height: 48,
+              //           decoration: BoxDecoration(
+              //               color: Colors.white,
+              //               borderRadius: BorderRadius.circular(8),
+              //               boxShadow: const [
+              //                 BoxShadow(
+              //                     color: Colors.grey,
+              //                     blurRadius: 2,
+              //                     offset: Offset(0, 1))
+              //               ]),
+              //           child: TextFormField(
+              //             controller: cityNameController,
+              //             decoration:  InputDecoration(
+              //                 hintText: "${getProfileModel?.data?.first.city}",
+              //                 contentPadding: EdgeInsets.symmetric(
+              //                     horizontal: 16, vertical: 8),
+              //                 border: InputBorder.none),
+              //           )),
+              //     )
+              //   ],
+              // ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                          height: 48,
+                          child: Image.asset("assets/images/state.png",scale: 1.5,)
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                       // width: 240,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(1.0, 1.0,),
+                              blurRadius: 0.2,
+                              spreadRadius: 0.5,
+                            ),
+                          ],
+                        ),
+                        child:
+                        DropdownButton(
+                          isExpanded: true,
+                          value: cityValue,
+                          hint: const Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text('City'),
+                          ),
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          // Array list of items
+                          items: cityList.map((items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Container(
+                                    child: Text(items.name.toString())),
+                              ),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (CityData? value) {
+                            setState(() {
+                              cityValue = value!;
+                              cityName = cityValue!.name;
+                              cityId = cityValue!.id;
+                              getArea("${cityValue!.id}");
+                              print("name herererb cityytyty $cityName");
+                            });
+                          },
+                          underline: Container(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // Row(
+              //   children: [
+              //     Container(
+              //       height: 48,
+              //       width: 48,
+              //       decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(8),
+              //           boxShadow: const [
+              //             BoxShadow(
+              //                 color: Colors.grey,
+              //                 blurRadius: 2,
+              //                 offset: Offset(0, 1))
+              //           ]),
+              //       child: const Icon(
+              //         Icons.place,
+              //         color: Colors.green,
+              //         size: 32,
+              //       ),
+              //     ),
+              //     const SizedBox(
+              //       width: 8,
+              //     ),
+              //     Expanded(
+              //       child: Container(
+              //           height: 48,
+              //           decoration: BoxDecoration(
+              //               color: Colors.white,
+              //               borderRadius: BorderRadius.circular(8),
+              //               boxShadow: const [
+              //                 BoxShadow(
+              //                     color: Colors.grey,
+              //                     blurRadius: 2,
+              //                     offset: Offset(0, 1))
+              //               ]),
+              //           child: TextFormField(
+              //             controller: regionNameController,
+              //             decoration: InputDecoration(
+              //                 hintText: "${getProfileModel?.data?.first.region}",
+              //                 contentPadding: EdgeInsets.symmetric(
+              //                     horizontal: 16, vertical: 8),
+              //                 border: InputBorder.none),
+              //           )),
+              //     )
+              //   ],
+              // ),
+
               const SizedBox(
                 height: 10,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                              offset: Offset(0, 1))
-                        ]),
-                    child: const Icon(
-                      Icons.location_city,
-                      color: Colors.green,
-                      size: 32,
+                  Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                        height: 48,
+                        width: 48,
+                        child: Image.asset("assets/images/region.png",scale: 1.5,)
                     ),
                   ),
                   const SizedBox(
-                    width: 8,
+                    width: 10,
                   ),
                   Expanded(
                     child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
-                        child: TextFormField(
-                          controller: stateNameController,
-                          decoration: InputDecoration(
-                              hintText: "${getProfileModel?.data?.first.state}",
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              border: InputBorder.none),
-                        )),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
+                                     //   width: 240,
+                      height: 48,
+                      decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(5),
                         boxShadow: const [
                           BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                              offset: Offset(0, 1))
-                        ]),
-                    child: const Icon(
-                      Icons.location_city,
-                      color: Colors.green,
-                      size: 32,
+                            color: Colors.grey,
+                            offset: Offset(1.0, 1.0,),
+                            blurRadius: 0.2,
+                            spreadRadius: 0.5,
+                          ),
+                        ],
+                      ),
+                      child:
+                      DropdownButton(
+                        isExpanded: true,
+                        value: countryValue,
+                        hint: const Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text('Region'),
+                        ),
+                        // Down Arrow Icon
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        // Array list of items
+                        items: countryList.map((items) {
+                          return
+                            DropdownMenuItem(
+                              value: items,
+                              child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(items.name.toString()),
+                                  )),
+                            );
+                        }).toList(),
+                        // After selecting the desired option,it will
+                        // change button value to selected value
+                        onChanged: (CountryData? value) {
+                          setState(() {
+                            countryValue = value!;
+                            countryId = countryValue!.id;
+                            // getstate("${countryValue!.id}");
+                            // ("${stateValue!.id}");
+                            // stateName = stateValue!.name;
+                            print("name herererb $countryId");
+                          });
+                        },
+                        underline: Container(),
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
-                        child: TextFormField(
-                          controller: cityNameController,
-                          decoration:  InputDecoration(
-                              hintText: "${getProfileModel?.data?.first.city}",
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              border: InputBorder.none),
-                        )),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 2,
-                              offset: Offset(0, 1))
-                        ]),
-                    child: const Icon(
-                      Icons.place,
-                      color: Colors.green,
-                      size: 32,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                  offset: Offset(0, 1))
-                            ]),
-                        child: TextFormField(
-                          controller: regionNameController,
-                          decoration: InputDecoration(
-                              hintText: "${getProfileModel?.data?.first.region}",
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              border: InputBorder.none),
-                        )),
-                  )
                 ],
               ),
               const SizedBox(
@@ -1243,7 +1647,9 @@ class _EditProfileState extends State<MyProfile> {
               // ),
               Center(
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+
+                  },
                   child: Container(
                     width: 240,
                     height: 48,

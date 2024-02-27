@@ -85,10 +85,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../Helper/color.dart';
 import '../Screen/SubmitScreen.dart';
+import 'RegistrationFees.dart';
 
 class KycInformationScreen extends StatefulWidget {
   final Name;
@@ -112,10 +114,12 @@ class KycInformationScreen extends StatefulWidget {
   final Ifsc;
   final UpiId;
   final QrImage;
+  final alternatemobile;
+  final addressTypeCtr;
   const KycInformationScreen({Key? key, this.Date, this.ConfirmPassword,
     this.Passowrd, this.Email, this.Name, this.Address,
     this.City, this.Contact, this.Region, this.States,
-    this.Vehicle, this.Zip, this.lat, this.long, this.VehicleType, this.Pincode, this.AccountNumber, this.BankName, this.Ifsc, this.QrImage, this.UpiId});
+    this.Vehicle, this.Zip, this.lat, this.long, this.VehicleType, this.Pincode, this.AccountNumber, this.BankName, this.Ifsc, this.QrImage, this.UpiId, this.alternatemobile, this.addressTypeCtr});
 
   @override
   State<KycInformationScreen> createState() => _KycInformationScreenState();
@@ -360,40 +364,47 @@ class _KycInformationScreenState extends State<KycInformationScreen> {
               },
               child: aadharCardBack()),
           const SizedBox(
-            height: 10,
+            height: 30,
           ),
-          const Text("Qr Code",
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(
-            height: 3,
-          ),
-          const Center(
-            child: Icon(
-              Icons.qr_code,
-              size: 70,
-            ),
-          ),
-          const SizedBox(
-            height: 40,
-          ),
+          // const Text("Qr Code",
+          //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          // const SizedBox(
+          //   height: 3,
+          // ),
+          // const Center(
+          //   child: Icon(
+          //     Icons.qr_code,
+          //     size: 70,
+          //   ),
+          // ),
+          // const SizedBox(
+          //   height: 40,
+          // ),
           InkWell(
             onTap: () {
-              print("kyc detailssss${electricityImage!.path} ${policeImage!.path} ${aadharImage!.path} ${aadharBack!.path} ${selfieImage!.path}"
-                  "${widget.States} ${widget.City} ${widget.UpiId} ${widget.Ifsc} ${widget.BankName} ${widget.QrImage} ===========");
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Submit(
-                      Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
-                      Date: widget.Date, Vehicle: widget.Vehicle, Contact: widget.Contact, Address: widget.Address,
-                      States: widget.States, City: widget.City, Region: widget.Region, Zip: widget.Zip,
-                      lat: widget.lat, long: widget.long, VehicleType: widget.VehicleType, Pincode: widget.Pincode,
-                    Selfie: selfieImage!.path, Driving: drivingImage!.path,
-                    Electricity: electricityImage!.path, Police: policeImage!.path,
-                    AadharFront: aadharImage!.path,
-                    AadharBack: aadharBack!.path,
-                    BankName: widget.BankName,
-                    AccountNumber: widget.AccountNumber,
-                    Ifsc:widget.Ifsc, UpiId: widget.UpiId,
-                   QrImage: widget.QrImage.toString(),
-              ),
+              // print("kyc detailssss${electricityImage?.path ?? ""} ${policeImage!.path} ${aadharImage!.path} ${aadharBack!.path} ${selfieImage!.path}"
+              //     "${widget.States} ${widget.City} ${widget.UpiId} ${widget.Ifsc} ${widget.BankName} ${widget.QrImage} ===========");
+             if(selfieImage==null||drivingImage==null||electricityImage==null||policeImage==null||aadharImage==null||aadharBack==null)
+            {
+              Fluttertoast.showToast(msg: "Upload All Images");
+            }
+             else
+               Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationFees(
+                 Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
+                 Date: widget.Date, Vehicle: widget.Vehicle, Contact: widget.Contact, Address: widget.Address,
+                 States: widget.States, City: widget.City, Region: widget.Region, Zip: widget.Zip,
+                 lat: widget.lat, long: widget.long, VehicleType: widget.VehicleType, Pincode: widget.Pincode,
+                 Selfie: selfieImage!.path, Driving: drivingImage!.path,
+                 Electricity: electricityImage!.path, Police: policeImage!.path,
+                 AadharFront: aadharImage!.path,
+                 AadharBack: aadharBack!.path,
+                 BankName: widget.BankName,
+                 AccountNumber: widget.AccountNumber,
+                 Ifsc:widget.Ifsc, UpiId: widget.UpiId,
+                 QrImage: widget.QrImage.toString(),
+                 addressTypeCtr: widget.addressTypeCtr,
+               ),
+
               ),
               );
             },

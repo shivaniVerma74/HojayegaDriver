@@ -411,7 +411,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                   }
                                   return null;
                                 },
-                                maxLength: 8,
+                                maxLength: 12,
                                 // validator: validatior,
                                 obscureText: showPassword == true ? false : true,
                                 // obscuringCharacter: '*',
@@ -476,11 +476,16 @@ class _PersonalInformationState extends State<PersonalInformation> {
                                 ],
                               ),
                               child: TextFormField(
-                                maxLength: 8,
+                                maxLength: 12,
                                 // validator: validatior,
                                 obscureText: showPasswordNew == true ? false : true,
                                 // obscuringCharacter: '*',
                                 controller: cPasswordEditingController,
+                                validator: (value) {
+                                  if(value!=passwordEditingController.text)
+                                    return "Password Not Match";
+                                  return null;
+                                },
                                 // maxLength: length,
                                 keyboardType: TextInputType.text,
                                 decoration:  InputDecoration(
@@ -622,6 +627,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                               Passowrd: passwordEditingController.text, ConfirmPassword: cPasswordEditingController.text,
                               Date: dobCtr.text,
                               mobile: mobileCtr.text,
+                              alternatemobile: alternatemobileCtr.text,
                                ),
                               ),
                             );

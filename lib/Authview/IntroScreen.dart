@@ -74,7 +74,8 @@ class FirstScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: const Text(
-                'Maximum Profit Potential Optimize Efficiency by Combining Orders to save Time and Fuel, Earning More Rewards.',
+                "Maximum profit potential optimises efficiency by combining orders to save time & fuel.",
+                // 'Maximum Profit Potential Optimize Efficiency by Combining Orders to save Time and Fuel, Earning More Rewards.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
@@ -124,10 +125,11 @@ class SecondScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: const Text(
-                'Get paid on each safe delivery. No more waiting.',
+                "Get paid on each safe delivery. No more waiting.",
+                // 'Get paid on each safe delivery. No more waiting.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 25, color: Colors.red,
+                  fontSize: 20, color: Colors.black,
                   fontWeight: FontWeight.bold
                 ),
               ),
@@ -174,7 +176,9 @@ class ThirdScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: const Text(
-                'Increase your earnings using our delivery app. Simply plan your delivery route and earn with every minute you work."',
+
+                "Increase your earnings using our delivery app. Simply plan your delivery route and earn with every minute you work.",
+                // 'Increase your earnings using our delivery app. Simply plan your delivery route and earn with every minute you work."',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,

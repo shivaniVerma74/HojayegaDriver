@@ -30,10 +30,12 @@ class AccountDetails extends StatefulWidget {
   final long;
   final VehicleType;
   final Pincode;
+  final alternatemobile;
+  final addressTypeCtr;
   const AccountDetails({super.key, this.Date, this.ConfirmPassword,
     this.Passowrd, this.Email, this.Name, this.Address,
     this.City, this.Contact, this.Region, this.States,
-    this.Vehicle, this.Zip, this.lat, this.long, this.VehicleType, this.Pincode});
+    this.Vehicle, this.Zip, this.lat, this.long, this.VehicleType, this.Pincode, this.alternatemobile, this.addressTypeCtr});
 
   @override
   State<AccountDetails> createState() => _AccountDetailsState();
@@ -191,13 +193,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                 print("accoynt detailssss${banknamectr.text} ${widget.Date} ${widget.lat} "
                     "${widget.Pincode} ${widget.VehicleType} ${widget.Vehicle}"
                     " ${widget.Pincode} ${widget.Zip} ${widget.City} ${widget.States} ${widget.Address} ${widget.ConfirmPassword}"
-                    "${banknamectr.text} ${qrImage!.path}===========");
-                Navigator.push(context, MaterialPageRoute(builder: (contextn) => KycInformationScreen()));
+                    "${banknamectr.text} ${qrImage?.path ?? ""}===========");
+               // Navigator.push(context, MaterialPageRoute(builder: (contextn) => KycInformationScreen()));
                 if(banknamectr.text.length == 0 ||
                     acoountCtr.text.length == 0
                     || ifscCtr.text.length == 0 ||
-                    upiCtr.text.length == 0 || qrImage!.length == 0
-                ) {
+                    upiCtr.text.length == 0 || qrImage == null
+                )
+                {
                   Fluttertoast.showToast(msg: "Please Fill All Fields");
                 } else {
                   print("accoynt detailssss herererer${banknamectr.text} ${widget.Date} ${widget.lat} "
@@ -209,7 +212,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                       Date: widget.Date, Vehicle: widget.VehicleType, Contact: widget.Contact, Address: widget.Address,
                       States: widget.States.toString(), City: widget.City.toString(), Region: widget.Region, Zip: widget.Zip,
                       lat: widget.lat, long: widget.long, VehicleType: widget.VehicleType.toString(), Pincode: widget.Pincode,
-                    BankName: banknamectr.text, AccountNumber: acoountCtr.text, Ifsc: ifscCtr.text, UpiId: upiCtr.text, QrImage: qrImage!.path,),
+                    BankName: banknamectr.text, AccountNumber: acoountCtr.text, Ifsc: ifscCtr.text, UpiId: upiCtr.text, QrImage: qrImage!.path,alternatemobile: widget.alternatemobile ,addressTypeCtr: widget.addressTypeCtr),
                   ),
                   );
                 }

@@ -86,7 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const Padding(
                 padding:EdgeInsets.only(top: 15, left: 20, right: 10),
-                child: Text("Please provide your registered email or mobile number along with your password. If not registered, sign up for  new account.",
+                child: Text(
+                  "Please provide your registered email or mobile number along with your password. If not registered, sign up for  new account",
+                    // "Please provide your registered email or mobile number along with your password. If not registered, sign up for  new account.",
                     style: TextStyle(fontWeight: FontWeight.bold, color: colors.white, fontSize: 15)),
               ),
               const SizedBox(height: 15),
@@ -196,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     // obscuringCharacter: '*',
                                     controller: passCtr,
                                     // maxLength: length,
-                                    keyboardType: TextInputType.number,
+                                   // keyboardType: TextInputType.number,
                                     decoration:  InputDecoration(
                                         counterText: "",
                                         suffixIcon: InkWell(

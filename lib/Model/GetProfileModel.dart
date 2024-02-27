@@ -107,7 +107,8 @@ class ProfileData {
       String? createdAt, 
       String? updatedAt, 
       String? address, 
-      String? proPic, 
+      String? typeAddress,
+      String? proPic,
       String? accessories, 
       String? dob, 
       String? vehicleNumber, 
@@ -144,6 +145,7 @@ class ProfileData {
     _createdAt = createdAt;
     _updatedAt = updatedAt;
     _address = address;
+    _typeAddress = typeAddress;
     _proPic = proPic;
     _accessories = accessories;
     _dob = dob;
@@ -184,6 +186,7 @@ class ProfileData {
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
     _address = json['address'];
+    _typeAddress = json['type_address'];
     _proPic = json['pro_pic'];
     _accessories = json['accessories'];
     _dob = json['dob'];
@@ -222,6 +225,7 @@ class ProfileData {
   String? _createdAt;
   String? _updatedAt;
   String? _address;
+  String? _typeAddress;
   String? _proPic;
   String? _accessories;
   String? _dob;
@@ -259,6 +263,7 @@ class ProfileData {
   String? createdAt,
   String? updatedAt,
   String? address,
+  String? typeAddress,
   String? proPic,
   String? accessories,
   String? dob,
@@ -296,6 +301,7 @@ class ProfileData {
   createdAt: createdAt ?? _createdAt,
   updatedAt: updatedAt ?? _updatedAt,
   address: address ?? _address,
+  typeAddress: typeAddress ?? _typeAddress,
   proPic: proPic ?? _proPic,
   accessories: accessories ?? _accessories,
   dob: dob ?? _dob,
@@ -334,6 +340,7 @@ class ProfileData {
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
   String? get address => _address;
+  String? get typeAddress => _typeAddress;
   String? get proPic => _proPic;
   String? get accessories => _accessories;
   String? get dob => _dob;
@@ -374,6 +381,7 @@ class ProfileData {
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     map['address'] = _address;
+    map['typeAddress'] = _typeAddress;
     map['pro_pic'] = _proPic;
     map['accessories'] = _accessories;
     map['dob'] = _dob;

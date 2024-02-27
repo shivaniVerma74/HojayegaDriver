@@ -19,7 +19,8 @@ class VehicleInformation extends StatefulWidget {
   final Passowrd;
   final ConfirmPassword;
   final Date;
-  const VehicleInformation({super.key, this.Date, this.Email, this.ConfirmPassword, this.Name, this.Passowrd, this.mobile});
+  final alternatemobile;
+  const VehicleInformation({super.key, this.Date, this.Email, this.ConfirmPassword, this.Name, this.Passowrd, this.mobile, this.alternatemobile});
 
   @override
   State<VehicleInformation> createState() => _VehicleInformationState();
@@ -60,6 +61,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
   TextEditingController vehiclectr = TextEditingController();
   TextEditingController contachCtr = TextEditingController();
   TextEditingController addressCtr = TextEditingController();
+  TextEditingController addressTypeCtr = TextEditingController();
   TextEditingController regionCtr = TextEditingController();
   TextEditingController zipCtr = TextEditingController();
   TextEditingController pincodeCtr = TextEditingController();
@@ -228,7 +230,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
     request.fields.addAll({
       'state_id': sId.toString()
     });
-
+print("state parameteer ${request.fields}");
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {
@@ -481,11 +483,63 @@ class _VehicleInformationState extends State<VehicleInformation> {
                     ],
                   ),
                   child: TextFormField(
+                    // onTap: () {
+                    //   getLocation();
+                    // },
+                    controller:addressTypeCtr,
+                    // keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                        counterText: "",
+                        // suffixIcon: suffixIcons,
+                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        border: OutlineInputBorder(borderSide: BorderSide.none),
+                        hintText: "Type Address"
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),    const SizedBox(
+            height: 10,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                      width: 40,
+                      height: 40,
+                      child: Image.asset("assets/images/location.png",scale: 1.5,)
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  width: 240,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(1.0, 1.0,),
+                        blurRadius: 0.2,
+                        spreadRadius: 0.5,
+                      ),
+                    ],
+                  ),
+                  child: TextFormField(
                     onTap: () {
                       getLocation();
                     },
                     controller: addressCtr,
-                    keyboardType: TextInputType.number,
+                   // keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                         counterText: "",
                         // suffixIcon: suffixIcons,
@@ -981,12 +1035,12 @@ class _VehicleInformationState extends State<VehicleInformation> {
           // ),
           InkWell(
             onTap: () {
-              print("vehicle information${vehiclectr.text}${contachCtr.text}${addressCtr.text}${regionCtr.text}${zipCtr.text}$stateId$cityId"
+              print("vehicle information11111111${vehiclectr.text}${contachCtr.text}${addressCtr.text}${regionCtr.text}${zipCtr.text}$stateId$cityId"
                   "${regionCtr.text}${addressCtr.text}$selectedVehicle");
               // Navigator.push(context, MaterialPageRoute(builder: (contextn) => KycInformationScreen()));
               if(vehiclectr.text.length == 0
-              || addressCtr.text.length == 0 ||
-                  pincodeCtr.text.length == 0 || countryValue == false || cityValue == false || stateValue == false
+                  || addressCtr.text.length == 0 ||
+                  pincodeCtr.text.length == 0 || countryId == null || cityId == null || stateId == null|| addressTypeCtr.text.length==0
                ) {
                Fluttertoast.showToast(msg: "Please Fill All Fields");
               } else {
@@ -995,7 +1049,7 @@ class _VehicleInformationState extends State<VehicleInformation> {
                     Name: widget.Name, Email: widget.Email, Passowrd: widget.Passowrd, ConfirmPassword: widget.ConfirmPassword,
                     Date: widget.Date, Vehicle: vehiclectr.text, Contact: widget.mobile, Address: addressCtr.text,
                     States: stateId.toString(), City: cityId.toString(), Region: countryId.toString(), Zip: zipCtr.text,
-                    lat: latitude.toString(), long: longitudes.toString(), VehicleType: selectedVehicle.toString(), Pincode: pincodeCtr.text
+                    lat: latitude.toString(), long: longitudes.toString(), VehicleType: selectedVehicle.toString(), Pincode: pincodeCtr.text,alternatemobile: widget.alternatemobile,addressTypeCtr: addressTypeCtr.text,
                      ),
                    ),
                 );
