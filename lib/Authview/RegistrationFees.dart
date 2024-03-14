@@ -70,6 +70,9 @@ String? bagAmt;
 String? jacketAmt;
 String? mobileHolder;
 bool loading=false;
+bool isBag=false;
+bool isJacket=false;
+bool isMobileHolder=false;
   Future<void> registrationFees() async {
     var headers = {
       'Cookie': 'ci_session=0c7dbb3d5d78cf96fc13dbad8d93fb40c4294275'
@@ -221,9 +224,12 @@ bool loading=false;
   }
 
   List<String> list = ['Bag', 'Jacket', 'Mobile Holder'];
+
   int selected = 0;
   List<int> selectedIndices = [];
   List<int> addAmount = [];
+
+
 
   int isselected=0;
 
@@ -250,8 +256,7 @@ bool loading=false;
           ),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, ),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -297,9 +302,23 @@ bool loading=false;
                               if (selectedIndices.contains(index)) {
                                 isselected-=addAmount[index];
                                 selectedIndices.remove(index);
+                                if(index==0)
+                                  isBag=false;
+                                if(index==1)
+                                  isJacket=false;
+                                if(index==2)
+                                  isMobileHolder=false;
+        
+        
                               } else {
                                 isselected+=addAmount[index];
                                 selectedIndices.add(index);
+                                if(index==0)
+                                  isBag=true;
+                                if(index==1)
+                                  isJacket=true;
+                                if(index==2)
+                                  isMobileHolder=true;
                               }
                             });
                             // if(index == 0){
@@ -332,7 +351,7 @@ bool loading=false;
                     Text(
                    ' ${list[index]} (Rs.${addAmount[index] ?? ""})',
                     style: TextStyle(fontSize: 18, color: Colors.black),)
-
+        
                     ],
                     );
                   },
@@ -347,7 +366,7 @@ bool loading=false;
                 height: 50,
                 child: CircularProgressIndicator()),
             ),
-
+        
             Container(
                 height: MediaQuery.of(context).size.height/3,
                 child: const Image(
@@ -364,23 +383,44 @@ bool loading=false;
             //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             //   ),
             // ),
-
+        
              Container(
-               height: 40,
-               width: 150,
+              // height: 40,
+               width: 180,
                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: colors.white),
                child: Center(
-                 child: Text(
-                  'Total = ${isselected} Rs.',
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: colors.primary),
-                ),
+                 child: Padding(
+                   padding: const EdgeInsets.all(8.0),
+                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                     children: [
+                       Text("Registration Fees = ${registrationFee}"),
+                       if(isBag==true)
+                       Text("Bag Price = ${addAmount[0]}"),
+                       if(isJacket==true)
+                       Text("Jacket Price = ${addAmount[1]}"),
+                       if(isMobileHolder==true)
+                       Text("Mobile Holder Price = ${addAmount[2]}"),
+                       Divider(
+                       // height: 2,
+                         thickness: 2,
+                         color: Colors.black,
+                       ),
+        
+                       Text(
+                        'Total = ${isselected} Rs.',
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: colors.primary),
+                                       ),
+                     ],
+                   ),
+                 ),
               ),
              ),
             SizedBox(height: 20,),
-
+        
             InkWell(
               onTap: () {
                 print("jaaakkjaaaaa");
